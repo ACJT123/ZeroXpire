@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.core.app.NotificationCompat
 
 const val notificationID = 1
@@ -18,6 +19,8 @@ const val messageExtra = "messageExtra"
 class Notification : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val totalExpiringIngredients = intent.getIntExtra("total", 0)
+
+        Log.d("totalNotif", totalExpiringIngredients.toString())
 
         // Create an Intent to open your MainActivity
         val contentIntent = Intent(context, MainActivity::class.java)

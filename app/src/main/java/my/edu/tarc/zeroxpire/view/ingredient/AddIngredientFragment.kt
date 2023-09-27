@@ -67,8 +67,6 @@ class AddIngredientFragment : Fragment() {
 
     private var progressDialog: ProgressDialog? = null
 
-    //TODO: ensure choosing category, otherwise in ingredient fragment will cause mxing of the category
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -129,14 +127,22 @@ class AddIngredientFragment : Fragment() {
 
 
         //image
-        binding.ingredientImage.setPadding(0, 0, 0, 0)
-        binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
         fileUri = arguments?.getParcelable<Uri>("ingredientImage")
         Log.d("ingredientImage!!", fileUri.toString())
-        Glide.with(requireContext())
-            .load(fileUri)
-            .centerCrop()
-            .into(binding.ingredientImage)
+        if(fileUri != null){
+            binding.ingredientImage.setPadding(0, 0, 0, 0)
+            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
+            Glide.with(requireContext())
+                .load(fileUri)
+                .centerCrop()
+                .into(binding.ingredientImage)
+        }
+        else{
+            Glide.with(requireContext())
+                .load(R.drawable.grocery)
+                .centerCrop()
+                .into(binding.ingredientImage)
+        }
 
         binding.chooseExpiryDate.setOnClickListener {
             showDatePickerDialog()
@@ -169,7 +175,6 @@ class AddIngredientFragment : Fragment() {
         // Set an item click listener to handle the selected category
         binding.chooseCategory.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val selectedCategory = ingredientCategories[position]
-            Toast.makeText(requireContext(), "Selected category: $selectedCategory", Toast.LENGTH_SHORT).show()
             binding.chooseCategoryLayout.isErrorEnabled = false
         }
 
@@ -241,6 +246,11 @@ class AddIngredientFragment : Fragment() {
             val storage = Firebase.storage("gs://zeroxpire.appspot.com")
             val imageRef = storage.reference.child("ingredientImage/${encodedIngredientName}.jpg")
 
+            if(fileUri == null){
+                // if the file uri is null, then use the R.drawable.grocery as the image
+                fileUri = Uri.parse("android.resource://my.edu.tarc.zeroxpire/drawable/grocery")
+                
+            }
 
             fileUri?.let { uri ->
                 imageRef.putFile(uri)

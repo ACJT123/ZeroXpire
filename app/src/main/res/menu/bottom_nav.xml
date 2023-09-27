@@ -2,21 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@id/ingredientFragment"
-        android:icon="@drawable/kitchen_refrigerator"
+        android:icon="@drawable/fridge"
         android:title="@string/ingredients" />
     <item
         android:id="@id/goalFragment"
-        android:icon="@drawable/goal"
+        android:icon="@drawable/target"
         android:title="@string/goals" />
     <item
         android:id="@+id/placeHolder"
         android:title=""/>
     <item
         android:id="@id/recipeFragment"
-        android:icon="@drawable/baseline_menu_book_24"
-        android:title="@string/recipe" />
+        android:icon="@drawable/recipe_book"
+        android:title="Recipes" />
     <item
         android:id="@id/profileFragment"
         android:icon="@drawable/baseline_person_24"
-        android:title="@string/profile" />
+        android:title="Profile" />
 </menu>

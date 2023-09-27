@@ -93,7 +93,7 @@ class ForgotPasswordFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setMessage("We have sent an email for password resetting to your mailbox").setCancelable(false)
             .setPositiveButton("Got it") { dialog, id ->
-                findNavController().navigateUp()
+                findNavController().navigate(R.id.loginFragment)
                 findNavController().clearBackStack(R.id.loginFragment)
             }
         val alert = builder.create()

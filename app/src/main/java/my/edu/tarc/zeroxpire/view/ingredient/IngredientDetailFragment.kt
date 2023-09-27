@@ -296,7 +296,6 @@ class IngredientDetailFragment : Fragment() {
         // Set an item click listener to handle the selected category
         binding.chooseCategory.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val selectedCategory = ingredientCategories[position]
-            Toast.makeText(requireContext(), "Selected category: $selectedCategory", Toast.LENGTH_SHORT).show()
         }
 
         // Programmatically open the dropdown list when the user clicks the AutoCompleteTextView

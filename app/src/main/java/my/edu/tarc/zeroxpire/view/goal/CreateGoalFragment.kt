@@ -138,11 +138,22 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
         val minute =  binding.timePicker.minute
         logg("hour: $hour , minute: $minute")
 
+        if (goalName.isEmpty()){
+            binding.enterGoalName.error = "Please enter the goal's name"
+            binding.enterGoalName.requestFocus()
+
+            return
+        }
+
         // Check if targetCompletionDate is null before storing the goal
         if (targetCompletionDate == null) {
-            // Show an error message or any other appropriate action
-            // For example, you can display a Toast message:
-            Toast.makeText(requireContext(), "Please select a completion date", Toast.LENGTH_SHORT).show()
+            binding.chooseTargetCompletionDate.error = "Please select the target completion date"
+            binding.chooseTargetCompletionDate.requestFocus()
+            return
+        }
+
+        if(selectedIngredients.isEmpty()){
+            Toast.makeText(requireContext(), "Please choose the ingredient", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -178,7 +189,7 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
                             Log.d("goalId", goalId.toString())
                             // Use the goalId as needed
                             updateGoalIdForIngredient(goalId)
-                            Toast.makeText(requireContext(), "Goal inserted with ID: $goalId", Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(requireContext(), "Goal inserted with ID: $goalId", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(requireContext(), getString(R.string.recipeDetailsErrorOccurred), Toast.LENGTH_SHORT).show()
                         }
@@ -238,7 +249,8 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
 //        }
 
         progressDialog?.dismiss()
-        Toast.makeText(requireContext(), "GoalID is updated successfully.", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "GoalID is updated successfully.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Goal is created successfully.", Toast.LENGTH_SHORT).show()
         findNavController().navigateUp()
         findNavController().clearBackStack(R.id.goalFragment)
 
@@ -436,7 +448,7 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
             "Select ingredients that you want to clear."
         }
         else{
-            "${selectedIngredientsTemporary.size - 1 } ingredient selected."
+            "${selectedIngredientsTemporary.size } ingredient selected."
         }
 
         Log.d("SelectedIngredients", selectedIngredientsTemporary.toString())

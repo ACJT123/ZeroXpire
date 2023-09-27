@@ -120,11 +120,21 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
                     goal.goalName.contains(newText, ignoreCase = true)
                 }
 
-//                if (filteredGoals.isNullOrEmpty()) {
-//                    binding.notFoundText.visibility = View.VISIBLE
-//                } else {
-//                    binding.notFoundText.visibility = View.INVISIBLE
-//                }
+                if (filteredGoals.isNullOrEmpty()) {
+                    binding.emptyHereContent.visibility = View.VISIBLE
+                    binding.allGoalsTextView.visibility = View.GONE
+                    binding.goalRecyclerview.visibility = View.GONE
+                    binding.goalStatistics.visibility = View.GONE
+                    binding.pieChart.visibility = View.GONE
+                    binding.legend.visibility = View.GONE
+                } else {
+                    binding.emptyHereContent.visibility = View.GONE
+                    binding.allGoalsTextView.visibility = View.VISIBLE
+                    binding.goalRecyclerview.visibility = View.VISIBLE
+                    binding.goalStatistics.visibility = View.VISIBLE
+                    binding.pieChart.visibility = View.VISIBLE
+                    binding.legend.visibility = View.VISIBLE
+                }
 
                 adapter.setGoal(filteredGoals ?: emptyList())
 
@@ -147,8 +157,8 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
                 val builder = AlertDialog.Builder(requireContext())
-                builder.setMessage("Have you completed this goal?").setCancelable(false)
-                    .setPositiveButton("Mark") { dialog, id ->
+                builder.setMessage("Complete this goal?").setCancelable(false)
+                    .setPositiveButton("Complete") { dialog, id ->
                         progressDialog = ProgressDialog(requireContext())
                         progressDialog?.setMessage("Completing...")
                         progressDialog?.setCancelable(false)
@@ -159,11 +169,11 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
                         val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, url, null,
                             { response ->
                                 // Handle successful deletion response, if required
-                                Toast.makeText(requireContext(), "You have completed a goal, Congratz!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "You have completed a goal, Congrats!", Toast.LENGTH_SHORT).show()
                             },
                             { error ->
                                 // Handle error response, if required
-                                Log.d("Cannot mark as completed", "Error Response: ${error.message}")
+                                Log.d("Cannot complete this goal", "Error Response: ${error.message}")
                             }
                         )
                         requestQueue.add(jsonObjectRequest)
@@ -417,7 +427,6 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
 
                         // Dismiss the progress dialog when finished loading ingredients
                         progressDialog?.dismiss()
-                        binding.content.visibility = View.VISIBLE
                         binding.emptyHereContent.visibility = View.GONE
                     }
                 } catch (e: UnknownHostException) {
@@ -430,8 +439,14 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
             },
             { error ->
                 goalViewModel.deleteAllGoals()
-                binding.content.visibility = View.INVISIBLE
                 binding.emptyHereContent.visibility  = View.VISIBLE
+                binding.goalSearchView.visibility  = View.GONE
+                binding.goalRecyclerview.visibility  = View.GONE
+                binding.allGoalsTextView.visibility  = View.GONE
+                binding.goalRecyclerview.visibility  = View.GONE
+                binding.goalStatistics.visibility  = View.GONE
+                binding.pieChart.visibility  = View.GONE
+                binding.legend.visibility  = View.GONE
                 progressDialog?.dismiss()
             }
         )

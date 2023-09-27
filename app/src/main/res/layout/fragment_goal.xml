@@ -9,33 +9,10 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:id="@+id/emptyHereContent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_centerInParent="true"
-                android:id="@+id/emptyHereImage"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/empty_here" />
-
-            <TextView
-                android:textAlignment="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/emptyHereImage"
-                android:text="Nothing here, Please create a goal."/>
-
-        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/content"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -82,15 +59,6 @@
                 android:layout_marginBottom="20dp"
                 android:orientation="vertical">
 
-                <!--        <LinearLayout-->
-                <!--            android:background="#173C3C3C"-->
-                <!--            android:layout_width="match_parent"-->
-                <!--            android:layout_height="wrap_content"-->
-                <!--            android:layout_below="@id/goalRecyclerview"-->
-                <!--            android:layout_marginTop="20dp"-->
-                <!--            android:layout_marginBottom="20dp"-->
-                <!--            android:orientation="vertical">-->
-
                 <TextView
                     android:id="@+id/goalStatistics"
                     android:layout_width="wrap_content"
@@ -108,6 +76,7 @@
                     android:layout_marginTop="10dp" />
 
                 <LinearLayout
+                    android:id="@+id/legend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -159,6 +128,32 @@
                         android:padding="4dp"
                         android:text="Uncompleted"/>
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    android:id="@+id/emptyHereContent"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginBottom="200dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:id="@+id/emptyHereImage"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/empty_here" />
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/emptyHereImage"
+                        android:text="Nothing here, Please create a goal."/>
+
+                </RelativeLayout>
             </LinearLayout>
 
         </RelativeLayout>

@@ -210,6 +210,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                             }
                         }
                     }
+                    binding.fab.isEnabled = true
                 }
                 R.id.goalFragment -> {
                     enableBtmNav()
@@ -219,6 +220,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                         navController.navigate(R.id.action_goalFragment_to_createGoalFragment)
                         disableBtmNav()
                     }
+                    binding.fab.isEnabled = ingredientViewModel.ingredientList.value?.size != 0
                 }
                 R.id.recipeFragment -> {
                     enableBtmNav()
@@ -227,6 +229,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                         navController.navigate(R.id.action_recipeFragment_to_recipeCreateFragment)
                         disableBtmNav()
                     }
+                    binding.fab.isEnabled = ingredientViewModel.ingredientList.value?.size != 0
                 }
                 R.id.profileFragment -> {
                     enableBtmNav()
@@ -262,6 +265,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                             }
                         }
                     }
+                    binding.fab.isEnabled = true
                 }
             }
         }
@@ -765,7 +769,9 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                                     val sharedPreference =  this.getSharedPreferences("sharedPreference", 0)
                                     val storedReminderTime = sharedPreference.getInt("reminderTime", 3)
 
-                                    if (daysUntilExpiry <= storedReminderTime && daysUntilExpiry > 0) {
+                                    Log.d("storedReminderTime", storedReminderTime.toString())
+
+                                    if (daysUntilExpiry <= storedReminderTime && daysUntilExpiry >= 0 && ingredient.ingredientGoalId == null) {
                                         totalExpiringIngredients++
                                     }
 
@@ -781,7 +787,12 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                             // if the switch state is false from shared preference, then do not schedule notification
                             val sharedPreference =  this.getSharedPreferences("sharedPreference", 0)
                             val switchState = sharedPreference.getBoolean("switchState", false)
+
+                            Log.d("swtichState", switchState.toString())
+                            Log.d("totalIngredient", totalExpiringIngredients.toString())
+
                             if(switchState && totalExpiringIngredients > 0){
+                                createNotificationChannel()
                                 scheduleNotification(totalExpiringIngredients)
                             }
                         }
@@ -817,7 +828,20 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
     }
 
+    private fun createNotificationChannel()
+    {
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelID, name, importance)
+        channel.description = desc
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
     private fun scheduleNotification(totalExpiringIngredients: Int) {
+
+
         val intent = Intent(applicationContext, my.edu.tarc.zeroxpire.Notification::class.java)
         intent.putExtra("total", totalExpiringIngredients)
         val pendingIntent = PendingIntent.getBroadcast(
@@ -833,6 +857,9 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
         val sharedPreference = this.getSharedPreferences("sharedPreference", 0)
         val storedReminderTime = sharedPreference.getInt("hourOfDay", 20)
         val storedReminderMinute = sharedPreference.getInt("minute", 0)
+        Log.d("time", storedReminderTime.toString())
+        Log.d("min", storedReminderMinute.toString())
+
 
         // Calculate the time for the next day's notification
         val currentTime = Calendar.getInstance()
@@ -846,6 +873,10 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
             // schedule it for the next day
             notificationTime.add(Calendar.DAY_OF_YEAR, 1)
         }
+
+        Log.d("notifTIme", notificationTime.time.toString())
+
+        Log.d("currentTime", System.currentTimeMillis().toString())
 
         alarmManager.setAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,

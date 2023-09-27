@@ -1,6 +1,7 @@
 package my.edu.tarc.zeroxpire.view.others
 
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,11 +13,13 @@ import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import my.edu.tarc.zeroxpire.MainActivity
 import my.edu.tarc.zeroxpire.R
 import my.edu.tarc.zeroxpire.databinding.FragmentNotificationsBinding
 
@@ -32,6 +35,7 @@ class NotificationsFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -166,10 +170,14 @@ class NotificationsFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
+                val mainActivity = activity as? MainActivity
+                mainActivity?.loadIngredient()
                 
             }
 
             val onBackPressedCallback = object : OnBackPressedCallback(true) {
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun handleOnBackPressed() {
                     saveReminderDays()
                     saveDailyReminderTime(timePicker.hour, timePicker.minute)
@@ -205,6 +213,9 @@ class NotificationsFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
+                    val mainActivity = activity as? MainActivity
+                    mainActivity?.loadIngredient()
                 }
             }
             requireActivity().onBackPressedDispatcher.addCallback(
@@ -229,11 +240,11 @@ class NotificationsFragment : Fragment() {
             editor.putInt("hourOfDay", hour)
             editor.putInt("minute", minute)
             editor.apply()
-            Toast.makeText(
-                requireContext(),
-                "Daily reminder time set to ${hour}:$minute",
-                Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                requireContext(),
+//                "Daily reminder time set to ${hour}:$minute",
+//                Toast.LENGTH_SHORT
+//            ).show()
         }
 
         private fun saveIsChecked() {

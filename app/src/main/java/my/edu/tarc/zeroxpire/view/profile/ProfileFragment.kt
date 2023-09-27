@@ -14,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
@@ -28,7 +29,9 @@ import my.edu.tarc.zeroxpire.R
 import my.edu.tarc.zeroxpire.WebDB
 import my.edu.tarc.zeroxpire.databinding.FragmentProfileBinding
 import my.edu.tarc.zeroxpire.model.IngredientDatabase
+import org.json.JSONArray
 import org.json.JSONObject
+import java.net.UnknownHostException
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
@@ -48,7 +51,7 @@ class ProfileFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-
+        getUsername()
         if(auth.currentUser != null){
             val user = Firebase.auth.currentUser
             val photoUrl = user?.photoUrl
@@ -58,12 +61,17 @@ class ProfileFragment : Fragment() {
                     .load(profilePictureUrl)
                     .into(binding.profilePicture)
             }
+            else{
+                Glide.with(this)
+                    .load(R.drawable.user)
+                    .into(binding.profilePicture)
+            }
             username = user?.displayName
             binding.username.text = username.toString()
             val email = user?.email
             binding.email.text = email.toString()
-
         }
+
 
         return binding.root
     }
@@ -104,6 +112,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.deleteAccBtn.setOnClickListener {
+            logg("currentuser:  ${auth.currentUser?.uid.toString()}")
             val builder = AlertDialog.Builder(requireContext())
             builder.setMessage("Are you sure you want to Delete?")
                 .setCancelable(false)
@@ -119,6 +128,54 @@ class ProfileFragment : Fragment() {
         }
 
         navigateBack()
+    }
+
+    private fun getUsername(){
+        val url: String = getString(R.string.url_server) + getString(R.string.url_read_username) + "?userId=${auth.currentUser?.uid}"
+        Log.d("uid", auth.currentUser?.uid.toString())
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                try {
+                    if (response != null) {
+                        val strResponse = response.toString()
+                        val jsonResponse = JSONObject(strResponse)
+                        val jsonArray: JSONArray = jsonResponse.getJSONArray("records")
+                        val size: Int = jsonArray.length()
+
+
+                        if (size > 0) {
+                            for (i in 0 until size) {
+                                val jsonUser: JSONObject = jsonArray.getJSONObject(i)
+                                val getUserId = jsonUser.getString("userId")
+                                val getUserName = jsonUser.getString("userName")
+                                val stayLoggedIn = jsonUser.getInt("stayLoggedIn")
+                                Log.d("username", getUserName)
+                                binding.username.text = getUserName
+                            }
+                        }
+
+
+                    }
+                } catch (e: UnknownHostException) {
+                    Log.d("ContactRepository", "Unknown Host: ${e.message}")
+
+                } catch (e: java.lang.Exception) {
+                    Log.d("Cannot load", "Response: ${e.message}")
+
+                }
+            },
+            { error ->
+            }
+        )
+
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+            DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+            0,
+            1f
+        )
+
+        WebDB.getInstance(requireActivity()).addToRequestQueue(jsonObjectRequest)
     }
 
     private fun navigateBack() {
@@ -162,6 +219,15 @@ class ProfileFragment : Fragment() {
                                     lifecycleScope.launch(Dispatchers.IO) {
                                         ingredientDatabase.deleteAllIngredient()
                                     }
+
+
+                                    //clear all shared preferences
+                                    val sharedPreferences = requireActivity().getSharedPreferences("sharedPreference", 0)
+                                    val editor = sharedPreferences.edit()
+                                    editor.clear()
+                                    editor.apply()
+
+
                                     disableBtmNav()
                                     Toast.makeText(requireContext(), "Account is deleted successfully", Toast.LENGTH_SHORT).show()
                                     progressDialog.dismiss()
@@ -196,6 +262,10 @@ class ProfileFragment : Fragment() {
         disableBtmNav()
         findNavController().navigate(R.id.loginFragment)
 
+    }
+
+    private fun logg(msg: String){
+        Log.d("ProfileFragment:",  "$msg")
     }
 
 

@@ -204,8 +204,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
-
             <TimePicker
                 android:id="@+id/timePicker"
                 android:layout_width="wrap_content"

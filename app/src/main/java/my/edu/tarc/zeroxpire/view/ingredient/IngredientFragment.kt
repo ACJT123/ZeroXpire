@@ -1,12 +1,8 @@
 package my.edu.tarc.zeroxpire.view.ingredient
 
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.ProgressDialog
-import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
@@ -17,15 +13,12 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
-import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,17 +28,12 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import my.edu.tarc.zeroxpire.MainActivity
 import my.edu.tarc.zeroxpire.R
 import my.edu.tarc.zeroxpire.WebDB
@@ -59,9 +47,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.net.UnknownHostException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -102,63 +87,26 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
 
 
+
+
         val mainActivity = activity as? MainActivity
         mainActivity?.loadIngredient()
 
         binding.sortBtn.setBackgroundResource(R.drawable.baseline_sort_24)
 
-        val user = Firebase.auth.currentUser
-        if (user != null) {
-            val photoUrl = user.photoUrl
-            val profilePictureUrl = photoUrl?.toString()
-            if (profilePictureUrl != null) {
-                Glide.with(this)
-                    .load(profilePictureUrl)
-                    .into(binding.profilePicture)
-            }
-            else{
-                Glide.with(this)
-                    .load(R.drawable.messi)
-                    .into(binding.profilePicture)
-            }
-            if(user.displayName == ""){
-                getUsername()
-            } else {
-                getUsername()
-                binding.username.text = user.displayName
-            }
-        } else {
-            binding.username.text = "You are not signed in yet!"
-            binding.profilePicture.elevation = 0F
-        }
-
         val adapter = IngredientAdapter(this, goalViewModel)
 
-        //loadIngredient(adapter)
+//        loadIngredient(adapter)
 
-        //createNotificationChannel()
+        loadIngredientViewModel(adapter)
 
-
-
-        ingredientViewModel.ingredientList.observe(viewLifecycleOwner, Observer { ingredients ->
-            goalViewModel.goalList.observe(viewLifecycleOwner, Observer { goals ->
-                val unconsumedIngredients = ingredients.filter { ingredient ->
-                    val goal = goals.find { it.goalId == ingredient.ingredientGoalId }
-                    goal?.completedDate == null
-                }
-
-                logg("unconsumedIngredients: $unconsumedIngredients")
-                adapter.setIngredient(unconsumedIngredients)
-
-
-            })
-        })
 
 
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerview.adapter = adapter
 
-        binding.recyclerview.visibility = View.VISIBLE
+
+
 
         sortIngredient(adapter)
 
@@ -168,8 +116,30 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
         searchIngredient(adapter)
         delete(adapter)
-        greeting()
         navigateBack()
+    }
+
+    private fun loadIngredientViewModel(adapter: IngredientAdapter) {
+        ingredientViewModel.ingredientList.observe(viewLifecycleOwner, Observer { ingredients ->
+            goalViewModel.goalList.observe(viewLifecycleOwner, Observer { goals ->
+                val unconsumedIngredients = ingredients.filter { ingredient ->
+                    val goal = goals.find { it.goalId == ingredient.ingredientGoalId }
+                    goal?.completedDate == null
+                }
+
+                if (unconsumedIngredients.isEmpty()) {
+                    binding.emptyHereContent.visibility = View.VISIBLE
+                    binding.notFoundContent.visibility = View.GONE  // Hide notFoundContent when the list is not empty
+                } else {
+                    binding.emptyHereContent.visibility = View.GONE
+                    binding.notFoundContent.visibility = View.GONE  // Hide notFoundContent when the list is not empty
+                    binding.labels.visibility = View.VISIBLE
+                    binding.headers.visibility = View.VISIBLE
+                    binding.recyclerview.visibility = View.VISIBLE
+                    adapter.setIngredient(unconsumedIngredients)
+                }
+            })
+        })
     }
 
     private fun filterIngredient(adapter: IngredientAdapter) {
@@ -182,6 +152,7 @@ class IngredientFragment : Fragment(), IngredientClickListener {
             // Clear all filters and show the original list
             adapter.setIngredient(ingredientViewModel.ingredientList.value ?: emptyList())
             bottomSheetDialog.dismiss() // Close the bottom sheet after resetting
+            binding.notFoundContent.visibility = View.GONE
         }
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
@@ -274,144 +245,30 @@ class IngredientFragment : Fragment(), IngredientClickListener {
                 }
             }
 
+            if(filteredIngredients.isEmpty()){
+                binding.notFoundContent.visibility = View.VISIBLE
+            }
+            else{
+                binding.notFoundContent.visibility = View.GONE
+            }
+
+            filteredIngredients = filterConsumedIngredients(filteredIngredients)
             adapter.setIngredient(filteredIngredients)
+
             bottomSheetDialog.dismiss()
         }
     }
 
-
-
-
-//    private fun applyFilter(filterOption: String, adapter: IngredientAdapter) {
-//
-//
-//        val filteredIngredients = when (filterOption) {
-//            "Expired" -> allIngredients.filter { ingredient ->
-//                ingredient.expiryDate.before(Date()) // Ingredients that have expired
-//            }
-//            "Not Expired" -> allIngredients.filter { ingredient ->
-//                ingredient.expiryDate.after(Date()) // Ingredients that haven't expired
-//            }
-//            "Not Attached to Goal" -> allIngredients.filter { ingredient ->
-//                ingredient.ingredientGoalId == null // Ingredients not attached to a goal
-//            }
-//            "Grains", "Fruits", "Vegetables" -> allIngredients.filter { ingredient ->
-//                ingredient.ingredientCategory == filterOption // Ingredients with selected category
-//            }
-//            "All" -> allIngredients // Show all ingredients
-//            else -> emptyList() // Default case, no matching filter option
-//        }
-//
-//        binding.notFoundText.visibility = if (filteredIngredients.isEmpty()) View.VISIBLE else View.GONE
-//        binding.allIngredientsTextView.visibility = if (filteredIngredients.isEmpty()) View.GONE else View.VISIBLE
-//
-//
-//    }
-
-
-    private fun getUsername(){
-        val url: String = getString(R.string.url_server) + getString(R.string.url_read_username) + "?userId=${auth.currentUser?.uid}"
-        Log.d("uid", auth.currentUser?.uid.toString())
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET, url, null,
-            { response ->
-                try {
-                    if (response != null) {
-                        val strResponse = response.toString()
-                        val jsonResponse = JSONObject(strResponse)
-                        val jsonArray: JSONArray = jsonResponse.getJSONArray("records")
-                        val size: Int = jsonArray.length()
-
-
-                        if (size > 0) {
-                            for (i in 0 until size) {
-                                val jsonUser: JSONObject = jsonArray.getJSONObject(i)
-                                val getUserId = jsonUser.getString("userId")
-                                val getUserName = jsonUser.getString("userName")
-                                val stayLoggedIn = jsonUser.getInt("stayLoggedIn")
-                                Log.d("username", getUserName)
-                                binding.username.text = getUserName
-                            }
-                        }
-
-
-                    }
-                } catch (e: UnknownHostException) {
-                    Log.d("ContactRepository", "Unknown Host: ${e.message}")
-
-                } catch (e: java.lang.Exception) {
-                    Log.d("Cannot load", "Response: ${e.message}")
-
-                }
-            },
-            { error ->
-            }
-        )
-
-        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
-            DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
-            0,
-            1f
-        )
-
-        WebDB.getInstance(requireActivity()).addToRequestQueue(jsonObjectRequest)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun reminder(ingredients: List<Ingredient>) {
-        val notificationManager = NotificationManagerCompat.from(requireContext())
-
-        if (ingredients.isNotEmpty()) {
-            val channelId = CHANNEL_ID
-            val notificationId = NOTIF_ID
-
-            var absDaysLeft: Long? = null
-            var count: Int = 0
-
-            for (ingredient in ingredients){
-                val expiryDate: LocalDate? = ingredient.expiryDate.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate()
-                val currentDate: LocalDate = LocalDate.now()
-                absDaysLeft = ChronoUnit.DAYS.between(currentDate, expiryDate)
-                count += 1
-            }
-
-
-
-
-            val expiryMessage = if(absDaysLeft == 0L){
-                "$count ingredient is expiring today."
-            }else{
-                return
-            }
-
-            val notificationBuilder = NotificationCompat.Builder(requireContext(), channelId)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Expiry Date Alert")
-                .setContentText(expiryMessage)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-
-            // Load the ingredientImage using Glide and convert it to a Bitmap
-            // For simplicity, you can omit the image in the summary notification
-
-            notificationManager.notify(notificationId, notificationBuilder.build())
+    private fun filterConsumedIngredients(ingredients: List<Ingredient>): List<Ingredient> {
+        return ingredients.filter { ingredient ->
+            val goal = goalViewModel.goalList.value?.find { it.goalId == ingredient.ingredientGoalId }
+            goal?.completedDate == null
         }
     }
 
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID, CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                lightColor = Color.GREEN
-                enableLights(true)
-
-            }
-            val manager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
-        }
+    private fun isIngredientConsumed(ingredient: Ingredient): Boolean {
+        val goal = goalViewModel.goalList.value?.find { it.goalId == ingredient.ingredientGoalId }
+        return goal?.completedDate != null
     }
     private fun sortIngredient(adapter: IngredientAdapter) {
         var sortMode = SortMode.BY_EXPIRY_DATE_ASC
@@ -420,25 +277,24 @@ class IngredientFragment : Fragment(), IngredientClickListener {
             when (sortMode) {
                 SortMode.BY_EXPIRY_DATE_ASC -> {
                     ingredientViewModel.sortByExpiryDate().observe(viewLifecycleOwner, Observer {
-
-                        Log.d("expSortAsc", it.toString())
-                        adapter.setIngredient(it)
+                        val unconsumedIngredients = filterConsumedIngredients(it)
+                        adapter.setIngredient(unconsumedIngredients)
                     })
                     binding.sortBtn.setBackgroundResource(R.drawable._023915_sort_ascending_fill_icon)
                     sortMode = SortMode.BY_EXPIRY_DATE_DESC
                 }
                 SortMode.BY_EXPIRY_DATE_DESC -> {
                     ingredientViewModel.sortByExpiryDateDesc().observe(viewLifecycleOwner, Observer {
-                        Log.d("expSortDesc", it.toString())
-                        adapter.setIngredient(it)
+                        val unconsumedIngredients = filterConsumedIngredients(it)
+                        adapter.setIngredient(unconsumedIngredients)
                     })
                     binding.sortBtn.setBackgroundResource(R.drawable._023914_sort_descending_fill_icon)
                     sortMode = SortMode.BY_DATE_ADDED
                 }
                 SortMode.BY_DATE_ADDED -> {
                     ingredientViewModel.sortByDateAdded().observe(viewLifecycleOwner,  Observer {
-                        Log.d("dateAddedsort", it.toString())
-                        adapter.setIngredient(it)
+                        val unconsumedIngredients = filterConsumedIngredients(it)
+                        adapter.setIngredient(unconsumedIngredients)
                     })
                     binding.sortBtn.setBackgroundResource(R.drawable.baseline_sort_24)
                     sortMode = SortMode.BY_EXPIRY_DATE_ASC
@@ -446,15 +302,11 @@ class IngredientFragment : Fragment(), IngredientClickListener {
             }
         }
     }
-
     enum class SortMode {
         BY_EXPIRY_DATE_ASC,
         BY_EXPIRY_DATE_DESC,
         BY_DATE_ADDED
     }
-
-
-
 
     fun loadIngredient(adapter: IngredientAdapter?) {
         progressDialog = ProgressDialog(requireContext())
@@ -534,6 +386,20 @@ class IngredientFragment : Fragment(), IngredientClickListener {
                         // Dismiss the progress dialog when finished loading ingredients
                         progressDialog?.dismiss()
 
+                        if (ingredientViewModel.ingredientList.value?.size == 0) {
+                            binding.emptyHereContent.visibility = View.VISIBLE
+                            binding.notFoundContent.visibility = View.GONE  // Hide notFoundContent when the list is not empty
+                            binding.headers.visibility = View.GONE
+                            binding.labels.visibility = View.GONE
+                        } else {
+                            binding.emptyHereContent.visibility = View.GONE
+                            binding.notFoundContent.visibility = View.GONE  // Hide notFoundContent when the list is not empty
+                            binding.labels.visibility = View.VISIBLE
+                            binding.headers.visibility = View.VISIBLE
+                        }
+                        adapter?.setIngredient(ingredientViewModel.ingredientList.value ?: emptyList())
+
+
                     }
                 } catch (e: UnknownHostException) {
                     Log.d("ContactRepository", "Unknown Host: ${e.message}")
@@ -546,11 +412,6 @@ class IngredientFragment : Fragment(), IngredientClickListener {
             { error ->
                 //i think is when there is nothing to return then it will return 404
                 ingredientViewModel.deleteAllIngredients()
-                binding.recyclerview.visibility = View.INVISIBLE
-                binding.emptyHereContent.visibility  = View.VISIBLE
-                //binding.ingredientSearchView.visibility = View.INVISIBLE
-                //binding.labels.visibility = View.INVISIBLE
-                binding.notFoundText.visibility = View.INVISIBLE
                 progressDialog?.dismiss()
             }
         )
@@ -565,28 +426,7 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
     }
 
-    private fun uiInitialization(size: Int?) {
-        logg("ingredientListSize: $size")
 
-//        if (ingredientList!! > 0) {
-//            binding.sortBtn.visibility = View.VISIBLE
-//            binding.allIngredientsTextView.visibility = View.VISIBLE
-//            binding.recyclerview.visibility = View.VISIBLE
-//            binding.emptyHereContent.visibility = View.GONE
-//            binding.ingredientSearchView.visibility = View.VISIBLE
-//            binding.labels.visibility = View.VISIBLE
-//            binding.notFoundText.visibility = View.INVISIBLE
-//        }
-//        else{
-//            binding.sortBtn.visibility = View.GONE
-//            binding.allIngredientsTextView.visibility = View.GONE
-//            binding.recyclerview.visibility = View.GONE
-//            binding.emptyHereContent.visibility = View.VISIBLE
-//            binding.ingredientSearchView.visibility = View.GONE
-//            binding.labels.visibility = View.GONE
-//            binding.notFoundText.visibility = View.GONE
-//        }
-    }
     private fun searchIngredient(adapter: IngredientAdapter) {
         binding.ingredientSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -595,15 +435,15 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 val filteredIngredients = ingredientViewModel.ingredientList.value?.filter { ingredient ->
-                    ingredient.ingredientName.contains(newText, ignoreCase = true)
+                    !isIngredientConsumed(ingredient) && ingredient.ingredientName.contains(newText, ignoreCase = true)
                 }
 
                 if (filteredIngredients.isNullOrEmpty()) {
-                    binding.notFoundText.visibility = View.VISIBLE
-                    binding.allIngredientsTextView.visibility = View.VISIBLE // Add this line
+                    binding.notFoundContent.visibility = View.VISIBLE
+                    binding.allIngredientsTextView.visibility = View.VISIBLE
                 } else {
-                    binding.notFoundText.visibility = View.INVISIBLE
-                    binding.allIngredientsTextView.visibility = View.VISIBLE // Add this line
+                    binding.notFoundContent.visibility = View.GONE
+                    binding.allIngredientsTextView.visibility = View.VISIBLE
                 }
 
                 adapter.setIngredient(filteredIngredients ?: emptyList())
@@ -631,20 +471,6 @@ class IngredientFragment : Fragment(), IngredientClickListener {
             viewLifecycleOwner, onBackPressedCallback
         )
     }
-
-    private fun greeting() {
-        val greeting = binding.greeting
-        if (isEvening()) {
-            greeting.text = "Good evening!"
-        }
-        if (isMorning()) {
-            greeting.text = "Good morning!"
-        }
-        if (isAfternoon()) {
-            greeting.text = "Good afternoon!"
-        }
-    }
-
     private fun delete(adapter: IngredientAdapter) {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0, ItemTouchHelper.LEFT
@@ -677,6 +503,8 @@ class IngredientFragment : Fragment(), IngredientClickListener {
                                     // Handle successful deletion response, if required
                                     progressDialog?.dismiss()
 
+                                    loadIngredient(adapter)
+                                    adapter.notifyDataSetChanged()
                                     toast("Ingredient deleted.")
                                 },
                                 { error ->
@@ -704,25 +532,17 @@ class IngredientFragment : Fragment(), IngredientClickListener {
                             progressDialog?.show()
                             val position = viewHolder.adapterPosition
                             val deletedIngredient = adapter.getIngredientAt(position)
-                            //ingredientViewModel.deleteIngredient(deletedIngredient)
-
                             val urlDeleteGoal = getString(R.string.url_server) + getString(R.string.url_delete_goal) + "?goalId=" + deletedIngredient.ingredientGoalId
                             val jsonObjectRequestDeleteGoal = JsonObjectRequest(Request.Method.POST, urlDeleteGoal, null,
                                 { response ->
-                                    // Handle successful deletion response, if required
-//                                Toast.makeText(requireContext(), "Goal is deleted successfully.", Toast.LENGTH_SHORT).show()
-
                                     clearGoalIdForIngredient(deletedIngredient)
                                     adapter.notifyDataSetChanged()
                                 },
                                 { error ->
-                                    // Handle error response, if required
-                                    Log.d("Errorrrrrr", "Error Response: ${error.message}")
+                                    Log.d("Error", "Error Response: ${error.message}")
                                 }
                             )
                             requestQueue.add(jsonObjectRequestDeleteGoal)
-
-
                         }.setNegativeButton("Cancel") { dialog, id ->
                             adapter.notifyDataSetChanged()
                             dialog.dismiss()
@@ -730,8 +550,6 @@ class IngredientFragment : Fragment(), IngredientClickListener {
                     val alert = builder.create()
                     alert.show()
                 }
-
-
             }
 
             override fun onChildDraw(
@@ -826,25 +644,6 @@ class IngredientFragment : Fragment(), IngredientClickListener {
         setFragmentResult("requestCategory", bundleOf("category" to ingredient.ingredientCategory))
         disableBtmNav()
     }
-
-    private fun isMorning(): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-        return currentHour in 0..11 // Assuming morning is between 6 AM and 11 AM
-    }
-
-    private fun isAfternoon(): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-        return currentHour in 12..14 // Assuming afternoon is between 12 PM and 2 PM
-    }
-
-    private fun isEvening(): Boolean {
-        val calendar = Calendar.getInstance()
-        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-        return currentHour in 15..23 // Assuming evening is between 3 PM and 11 PM
-    }
-
     private fun disableBtmNav() {
         val view = requireActivity().findViewById<BottomAppBar>(R.id.bottomAppBar)
         view.visibility = View.INVISIBLE

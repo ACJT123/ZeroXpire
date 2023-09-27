@@ -60,9 +60,7 @@ class IngredientAdapter(
             "Fruits" -> R.drawable.fruits
             "Meat" -> R.drawable.meat
             "Seafood" -> R.drawable.seafood
-            //TODO
             "Eggs Products" -> R.drawable.eggs_2713474
-            //TODO
             "Other" -> R.drawable.icons_other
 
             else -> {}
@@ -114,7 +112,7 @@ class IngredientAdapter(
 
                     holder.textViewExpiryDate.text = "Consumed at: $formattedCompletedDate"
                     holder.textViewExpiryDate.setTextColor(getColor(holder.itemView.context, R.color.btnColor))
-                    holder.isAddedToGoalImage.visibility = View.GONE
+                    holder.isAddedToGoalImage.visibility = View.INVISIBLE
                     holder.textViewDaysLeft.text = "Expiry Date: ${formattedExpiryDate}"
                 }
             }

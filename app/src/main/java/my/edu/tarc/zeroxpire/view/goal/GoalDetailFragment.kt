@@ -353,9 +353,9 @@ class GoalDetailFragment : Fragment(), IngredientClickListener {
                                 val success: String = jsonResponse.get("success").toString()
 
                                 if (success == "1") {
-                                    toast(requireContext(), "Goal is deleted successfully.")
+                                    toast(binding.root.context, "Goal is deleted successfully.")
                                 } else {
-                                    toast(requireContext(), "Failed to delete.")
+                                    toast(binding.root.context, "Failed to delete.")
                                 }
                             }
                         }
