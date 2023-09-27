@@ -520,7 +520,7 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
         logg("entries: $entries")
 
 
-        val dataSet = PieDataSet(entries, "Mobile OS")
+        val dataSet = PieDataSet(entries, "Goals")
 
         logg("dataset: $dataSet")
         dataSet.colors = colors
