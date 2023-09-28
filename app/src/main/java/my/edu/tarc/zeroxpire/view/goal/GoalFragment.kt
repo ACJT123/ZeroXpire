@@ -94,7 +94,6 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
         binding.goalRecyclerview.adapter = adapter
 
         goalViewModel.goalList.observe(viewLifecycleOwner, Observer {goals ->
-            // Update the adapter's data when the goalList in the ViewModel changes
             adapter.setGoal(goals)
             pieChart()
             pieChartAnimation()
@@ -478,7 +477,6 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
         pieChart.isRotationEnabled = false
         pieChart.isHighlightPerTapEnabled = true
 
-        //pieChart.animateY(1400, Easing.EaseInOutQuad)
         pieChart.legend.isEnabled = false
         pieChart.setEntryLabelColor(Color.WHITE)
         pieChart.setEntryLabelTextSize(12f)
@@ -518,7 +516,6 @@ class GoalFragment : Fragment(), OnChartValueSelectedListener, GoalClickListener
         }
 
         logg("entries: $entries")
-
 
         val dataSet = PieDataSet(entries, "Goals")
 

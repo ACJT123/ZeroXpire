@@ -19,6 +19,7 @@ const val messageExtra = "messageExtra"
 class Notification : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val totalExpiringIngredients = intent.getIntExtra("total", 0)
+        val reminderWithinDays = intent.getIntExtra("days", 0)
 
         Log.d("totalNotif", totalExpiringIngredients.toString())
 
@@ -36,7 +37,7 @@ class Notification : BroadcastReceiver() {
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.final_logo))
             .setSmallIcon(R.drawable.final_logo)
             .setContentTitle("Hey! Don't forget!")
-            .setContentText("$totalExpiringIngredients ingredients are going to expire within 3 days")
+            .setContentText("$totalExpiringIngredients ingredients are going to expire within $reminderWithinDays days")
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()

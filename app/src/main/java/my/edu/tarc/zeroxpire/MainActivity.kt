@@ -270,48 +270,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
             }
         }
     }
-//    private val notificationId = 1234 // Unique notification ID
-//    private fun notifications(totalExpiringIngredients: Int) {
-//        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//
-//        // pendingIntent is an intent for future use i.e after
-//        // the notification is clicked, this intent will come into action
-//        val intent = Intent(this, MainActivity::class.java)
-//
-//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//
-//        // checking if android version is greater than oreo(API 26) or not
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
-//            notificationChannel.enableVibration(true)
-//            notificationManager.createNotificationChannel(notificationChannel)
-//
-//            builder = Notification.Builder(this, channelId)
-//                .setContentTitle("Hey! Don't Forget!")
-//                .setContentText("$totalExpiringIngredients ingredients are going to expire within 3 days")
-//                .setSmallIcon(R.drawable.final_logo)
-//                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.final_logo))
-//                .setContentIntent(pendingIntent)
-//        } else {
-//
-//            builder = Notification.Builder(this)
-//                .setContentTitle("Hey! Don't Forget!")
-//                .setContentText("$totalExpiringIngredients ingredients are going to expire within 3 days")
-//                .setSmallIcon(R.drawable.final_logo)
-//                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.final_logo))
-//                .setContentIntent(pendingIntent)
-//        }
-//        // Check if a notification with the same ID is already active
-//        val existingNotification = notificationManager.activeNotifications.find {
-//            it.id == notificationId
-//        }
-//
-//        if (existingNotification == null) {
-//            // No active notification with the same ID, send a new notification
-//            notificationManager.notify(notificationId, builder.build())
-//        }
-//    }
 
     override fun onBackPressed() {
         // Check if the camera option was chosen
@@ -408,8 +366,8 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
                 }
         } catch (e: Exception) {
+            toast("Fail to capture the image")
             progressDialog.dismiss()
-            // Handle the exception
         }
     }
 
@@ -840,10 +798,18 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     }
 
     private fun scheduleNotification(totalExpiringIngredients: Int) {
+        // Get the stored daily reminder time from shared preferences
+        val sharedPreference = this.getSharedPreferences("sharedPreference", 0)
+        val storedReminderTime = sharedPreference.getInt("hourOfDay", 20)
+        val storedReminderMinute = sharedPreference.getInt("minute", 0)
+        Log.d("time", storedReminderTime.toString())
+        Log.d("min", storedReminderMinute.toString())
 
+        val reminderWithinDays = sharedPreference.getInt("reminderTime", 3)
 
         val intent = Intent(applicationContext, my.edu.tarc.zeroxpire.Notification::class.java)
         intent.putExtra("total", totalExpiringIngredients)
+        intent.putExtra("days", reminderWithinDays)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
             notificationID,
@@ -852,14 +818,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
         )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        // Get the stored daily reminder time from shared preferences
-        val sharedPreference = this.getSharedPreferences("sharedPreference", 0)
-        val storedReminderTime = sharedPreference.getInt("hourOfDay", 20)
-        val storedReminderMinute = sharedPreference.getInt("minute", 0)
-        Log.d("time", storedReminderTime.toString())
-        Log.d("min", storedReminderMinute.toString())
-
 
         // Calculate the time for the next day's notification
         val currentTime = Calendar.getInstance()
@@ -884,10 +842,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
             pendingIntent
         )
     }
-
-
-
-        
 
     }
     private fun logg(msg: String){
