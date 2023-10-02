@@ -90,7 +90,8 @@ class IngredientDetailFragment : Fragment() {
             val categoryPosition = ingredientCategories.indexOf(selectedCategory)
 
             // Set the selected category's position in the AutoCompleteTextView
-            val adapter = ArrayAdapter(requireContext(), R.layout.category_list, ingredientCategories)
+            val adapter =
+                ArrayAdapter(requireContext(), R.layout.category_list, ingredientCategories)
             binding.chooseCategory.setAdapter(adapter)
 
             //TODO
@@ -101,7 +102,10 @@ class IngredientDetailFragment : Fragment() {
 
 
         setFragmentResultListener("requestId") { _, bundle ->
-            val id = bundle.getInt("id", 0) // Use a default value if the key is not found or the value is not an integer
+            val id = bundle.getInt(
+                "id",
+                0
+            ) // Use a default value if the key is not found or the value is not an integer
             ingredientId = id
         }
 
@@ -113,42 +117,16 @@ class IngredientDetailFragment : Fragment() {
 
         binding.ingredientImage.setPadding(0, 0, 0, 0)
         binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
+        var image: String? = ""
         setFragmentResultListener("requestImage") { _, bundle ->
             val imageUri = bundle.getString("image")
+            image = imageUri
             originalImage = imageUri?.toUri()
             Glide.with(requireContext())
                 .load(imageUri)
                 .centerCrop()
                 .into(binding.ingredientImage)
         }
-
-//        binding.enterIngredientName.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                val newName = s?.toString()
-//                val isNameChanged = newName != originalName
-//                val isDateChanged = selectedDate != null
-//
-//                binding.saveBtn.isEnabled = isNameChanged || isDateChanged
-//            }
-//        })
-
-//        binding.chooseExpiryDate.addTextChangedListener(object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                val newDate = parseDateStringToLong(s?.toString())
-//                val isDateChanged = newDate != selectedDate
-//                val isNameChanged = binding.enterIngredientName.text.toString() != originalName
-//
-//                binding.saveBtn.isEnabled = isNameChanged || isDateChanged
-//            }
-//        })
 
         showCategory()
 
@@ -167,52 +145,62 @@ class IngredientDetailFragment : Fragment() {
             val newExpiryDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 .format(newDate)
 
-            if(newName.isNotEmpty() && checkExist(newName)){
+            if (newName.isNotEmpty()) {
                 progressDialog = ProgressDialog(requireContext())
                 progressDialog?.setMessage("Updating...")
                 progressDialog?.setCancelable(false)
                 progressDialog?.show()
                 //todo: only workable if change all 3 fields
 
-                        val storage = Firebase.storage("gs://zeroxpire.appspot.com")
-                        val encodedIngredientImage = URLEncoder.encode(
-                            originalName + auth.currentUser?.uid,
-                            "UTF-8"
-                        )
-                        val imageRef = storage.reference.child("ingredientImage/${encodedIngredientImage}.jpg")
-                        Log.d("imageRef", imageRef.toString())
-                        imageFile?.let{uri->
-                            //delete current one
-                            imageRef.delete().addOnSuccessListener {
-                                val newIngredientImage = URLEncoder.encode(
-                                    newName + auth.currentUser?.uid,
-                                    "UTF-8"
-                                )
-                                val newImageRef = storage.reference.child("ingredientImage/${newIngredientImage}.jpg")
-                                newImageRef.putFile(uri).addOnSuccessListener{
-                                    newImageRef.downloadUrl.addOnSuccessListener { downloadedUri ->
-                                        logg("downloadedUri: $downloadedUri")
-                                        val imageUrl = downloadedUri.toString()
-                                        storeIngredientToDB(newName, newExpiryDate, imageUrl)
-                                    }
-                                }
 
+                val storage = Firebase.storage("gs://zeroxpire.appspot.com")
+                val encodedIngredientImage = URLEncoder.encode(
+                    originalName + auth.currentUser?.uid,
+                    "UTF-8"
+                )
+                val imageRef =
+                    storage.reference.child("ingredientImage/${encodedIngredientImage}.jpg")
+                Log.d("imageRef", imageRef.toString())
 
-                                progressDialog!!.dismiss()
-                                findNavController().popBackStack()
-
-                            }.addOnFailureListener {
-                                logg("cannot delete")
-                            }
-                        }
+                if(imageFile == null){
+                    storeIngredientToDB(newName, newExpiryDate, image!!)
                 }
-            else{
-                if(newName.isEmpty()){
+                else{
+                    imageFile?.let { uri ->
+                        //delete current one
+//                        imageRef.delete().addOnSuccessListener {
+                            val newIngredientImage = URLEncoder.encode(
+                                newName + auth.currentUser?.uid,
+                                "UTF-8"
+                            )
+                            val newImageRef =
+                                storage.reference.child("ingredientImage/${newIngredientImage}.jpg")
+                            newImageRef.putFile(uri).addOnSuccessListener {
+                                newImageRef.downloadUrl.addOnSuccessListener { downloadedUri ->
+                                    logg("downloadedUri: $downloadedUri")
+                                    val imageUrl = downloadedUri.toString()
+                                    storeIngredientToDB(newName, newExpiryDate, imageUrl)
+                                }
+                            }
+
+
+//                            progressDialog!!.dismiss()
+//                            findNavController().popBackStack()
+
+//                        }.addOnFailureListener {
+//                            logg("cannot delete")
+//                        }
+                    }
+                }
+
+            } else {
+                if (newName.isEmpty()) {
                     binding.enterIngredientName.error = "Please enter the ingredient's name"
                     binding.enterIngredientName.requestFocus()
                 }
-                if(!checkExist(newName)){
-                    binding.enterIngredientName.error = "Ingredient has already exists, choose other name."
+                if (!checkExist(newName)) {
+                    binding.enterIngredientName.error =
+                        "Ingredient has already exists, choose other name."
                     binding.enterIngredientName.requestFocus()
                 }
 
@@ -244,13 +232,15 @@ class IngredientDetailFragment : Fragment() {
     private fun checkExist(newName: String): Boolean {
         val ingredientNameList = mutableListOf<Ingredient>()
 
-        ingredientViewModel.ingredientList.observe(viewLifecycleOwner, androidx.lifecycle.Observer { ingredients ->
-            ingredients.map {
-                if(it.ingredientName == newName){
-                    ingredientNameList.add(it)
+        ingredientViewModel.ingredientList.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { ingredients ->
+                ingredients.map {
+                    if (it.ingredientName == newName) {
+                        ingredientNameList.add(it)
+                    }
                 }
-            }
-        })
+            })
 
         return ingredientNameList.size == 0
 
@@ -274,29 +264,32 @@ class IngredientDetailFragment : Fragment() {
 
         var category: String? = null
         var index: Int? = null
-        ingredientViewModel.ingredientList.observe(viewLifecycleOwner, androidx.lifecycle.Observer { ingredients ->
-            ingredients.map {
-                if (ingredientId == it.ingredientId) {
-                    category = it.ingredientCategory
+        ingredientViewModel.ingredientList.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { ingredients ->
+                ingredients.map {
+                    if (ingredientId == it.ingredientId) {
+                        category = it.ingredientCategory
+                    }
                 }
-            }
-            logg("category: $category")
+                logg("category: $category")
 
-            // Find the index of the preselected category in the ingredientCategories array
-            val preselectedIndex = ingredientCategories.indexOf(category)
-            index = preselectedIndex
-            logg("preselectedIndex: $preselectedIndex")
-            if (preselectedIndex != -1) {
-                // Set the selection programmatically
-                binding.chooseCategory.setText(ingredientCategories[preselectedIndex], false)
+                // Find the index of the preselected category in the ingredientCategories array
+                val preselectedIndex = ingredientCategories.indexOf(category)
                 index = preselectedIndex
-            }
-        })
+                logg("preselectedIndex: $preselectedIndex")
+                if (preselectedIndex != -1) {
+                    // Set the selection programmatically
+                    binding.chooseCategory.setText(ingredientCategories[preselectedIndex], false)
+                    index = preselectedIndex
+                }
+            })
 
         // Set an item click listener to handle the selected category
-        binding.chooseCategory.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val selectedCategory = ingredientCategories[position]
-        }
+        binding.chooseCategory.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                val selectedCategory = ingredientCategories[position]
+            }
 
         // Programmatically open the dropdown list when the user clicks the AutoCompleteTextView
         binding.chooseCategory.setOnClickListener {
@@ -306,31 +299,36 @@ class IngredientDetailFragment : Fragment() {
 
 
     private fun storeIngredientToDB(newName: String, newDate: String, imageUrl: String) {
-        val url = "https:/zeroxpire.000webhostapp.com/api/ingredient/update.php" +"?ingredientName=" + newName +
-                "&expiryDate=" + newDate+ "&ingredientImage=" + URLEncoder.encode(
-            imageUrl.substringAfterLast("%2F"), "UTF-8") +
-                "&ingredientCategory=" + binding.chooseCategory.text.toString() +
-                "&ingredientId=" + ingredientId
+        val url =
+            "https:/zeroxpire.000webhostapp.com/api/ingredient/update.php" + "?ingredientName=" + newName +
+                    "&expiryDate=" + newDate + "&ingredientImage=" + URLEncoder.encode(
+                imageUrl.substringAfterLast("%2F"), "UTF-8"
+            ) +
+                    "&ingredientCategory=" + binding.chooseCategory.text.toString() +
+                    "&ingredientId=" + ingredientId
         logg("newImageUrl: $url")
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST, url, null,
             { response ->
                 try {
-                    if(response!=null){
+                    if (response != null) {
                         val strResponse = response.toString()
                         val jsonResponse = JSONObject(strResponse)
                         val success: String = jsonResponse.get("success").toString()
 
                         if (success == "1") {
+
+                            progressDialog!!.dismiss()
+                            findNavController().popBackStack()
                             logg("Ingredient is updated successfully.")
+                            Toast.makeText(requireContext(), "Ingredient is updated successfully", Toast.LENGTH_SHORT).show()
 
                         } else {
                             logg("Failed to update.")
                         }
                     }
-                }
-                catch (e: java.lang.Exception) {
+                } catch (e: java.lang.Exception) {
                     Log.d("Update", "Response: %s".format(e.message.toString()))
                 }
             },
@@ -339,7 +337,8 @@ class IngredientDetailFragment : Fragment() {
                 Log.d("Update", "Error Response: ${error.message}")
             }
         )
-        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
+        jsonObjectRequest.retryPolicy =
+            DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
         WebDB.getInstance(binding.root.context).addToRequestQueue(jsonObjectRequest)
 
     }
@@ -390,24 +389,32 @@ class IngredientDetailFragment : Fragment() {
         builder.setMessage("Are you sure you want to delete?")
             .setCancelable(false)
             .setPositiveButton("Delete") { _, _ ->
-                val url = getString(R.string.url_server) + getString(R.string.url_delete_ingredient) + "?ingredientId=" + ingredientId
+                val url =
+                    getString(R.string.url_server) + getString(R.string.url_delete_ingredient) + "?ingredientId=" + ingredientId
                 val jsonObjectRequest = JsonObjectRequest(
                     Request.Method.POST, url, null,
                     { response ->
                         try {
-                            if(response!=null){
+                            if (response != null) {
                                 val strResponse = response.toString()
                                 val jsonResponse = JSONObject(strResponse)
                                 val success: String = jsonResponse.get("success").toString()
 
                                 if (success == "1") {
-                                    Toast.makeText(requireContext(), "Ingredient is deleted successfully.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Ingredient is deleted successfully.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(requireContext(), "Fail to delete.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Fail to delete.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
-                        }
-                        catch (e: java.lang.Exception) {
+                        } catch (e: java.lang.Exception) {
                             Log.d("Delete", "Response: %s".format(e.message.toString()))
                         }
                     },
@@ -416,7 +423,8 @@ class IngredientDetailFragment : Fragment() {
                         Log.d("Delete", "Error Response: ${error.message}")
                     }
                 )
-                jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
+                jsonObjectRequest.retryPolicy =
+                    DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
                 WebDB.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
                 findNavController().navigateUp()
             }
@@ -448,7 +456,7 @@ class IngredientDetailFragment : Fragment() {
     }
 
 
-    private fun logg(msg:String){
+    private fun logg(msg: String) {
         Log.d("ingredientDetailFragment", msg)
     }
 }
