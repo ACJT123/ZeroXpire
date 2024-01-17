@@ -1,0 +1,205 @@
+<resources>
+    <string name="app_name">ZeroXpire</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="goals">Goals</string>
+    <string name="active">Active</string>
+    <string name="completed">Completed</string>
+    <string name="uncompleted">Uncompleted</string>
+    <string name="profile">My Profile</string>
+    <string name="recipe">Recipe</string>
+    <string name="settings">Settings</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="logout">Logout</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="notifications">Notifications</string>
+    <string name="terms_and_conditions_content"><br>Please read these Terms and Conditions ("Terms") carefully before using the ZeroXpire application ("App") and its related services.
+        These Terms apply to all users ("User," "You," or "Your") of the App and services provided by ZeroXpire ("Service," "We," "Us," or "Our").
+        By accessing or using the App, You agree to be bound by these Terms. If You do not agree to these Terms, please do not access or use the App.
+        </br>
+<b>\n\n1. Use of the App
+</b>\na. You agree to use the App only for lawful purposes and in compliance with all applicable laws and regulations.
+\n\nb. You are responsible for maintaining the confidentiality of Your account information, including Your username and password. You agree to notify Us immediately of any unauthorized use of Your account or any other breach of security.
+\n<b>\n2. Intellectual Property
+</b>\na. All content provided on the App, including but not limited to text, graphics, logos, images, audio clips, video clips, data compilations, and software, is the property of ZeroXpire or its licensors and is protected by copyright, trademark, and other intellectual property laws.
+\n\nb. You may not modify, copy, reproduce, republish, upload, post, transmit, translate, sell, create derivative works, exploit, or distribute any content from the App without prior written permission from Us.
+\n
+        <b>\n3. User Content
+        </b>\na. The App may allow You to post, upload, or submit content, including but not limited to comments, reviews, and messages ("User Content"). By submitting User Content, You grant ZeroXpire a non-exclusive, royalty-free, perpetual, irrevocable, and fully sublicensable right to use, reproduce, modify, adapt, publish, translate, create derivative works, distribute, and display such User Content worldwide in any media.
+\n\nb. You represent and warrant that You own or have the necessary rights, licenses, and permissions to grant the above license and that Your User Content does not violate any third-party rights, including copyright, trademark, privacy, or publicity rights.
+\n
+        <b>\n4. Limitation of Liability
+        </b>\na. To the maximum extent permitted by applicable law, We shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or other intangible losses, arising out of or in connection with Your use of or inability to use the App.
+\n\nb. We do not warrant the accuracy, completeness, or reliability of any content provided on the App. You acknowledge and agree that any reliance on such content is at Your own risk.
+\n
+        <b>\n5. Governing Law
+        </b>\nThese Terms shall be governed by and construed in accordance with the laws of [Jurisdiction]. Any dispute arising out of or relating to these Terms or Your use of the App shall be subject to the exclusive jurisdiction of the courts located in [Jurisdiction].
+\n
+        <b>\n6. Modifications
+        </b>
+        \nWe reserve the right, at Our sole discretion, to modify or replace these Terms at any time without prior notice. By continuing to access or use the App after any revisions become effective, You agree to be bound by the updated Terms.
+\n\nPlease contact us at [email address] if you have any questions or concerns regarding these Terms and Conditions.
+
+Last updated: [Date]\n
+</string>
+    <string name="daily_reminder">Daily Reminder</string>
+    <string name="reminder_time">Reminder Time</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="update">Update</string>
+    <string name="welcome_to_zeroxpire">Welcome to ZeroXpire!</string>
+    <string name="login_to_unlock_a_world_of_personalized_experiences_and_exclusive_content">Login to unlock a world of personalized experiences and exclusive content</string>
+    <string name="email">Email</string>
+    <string name="stay_logged_in">Stay logged in</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">Login</string>
+    <string name="or">-Or-</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="don_t_have_an_account_yet">Don’t have an account yet?</string>
+    <string name="create_account_now">Create account now!</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="login_now">Login Now!</string>
+    <string name="enter_your_email_account_and_we_ll_send_you_a_6_digit_verification_code_to_your_email">Enter your email account and we’ll send you a 6-digit Verification Code to your email.</string>
+    <string name="confirm">Confirm</string>
+    <string name="didn_t_get_the_code">Didn\'t get the code?</string>
+    <string name="resend_code">Resend Code</string>
+    <string name="your_new_password_must_be_different_from_previous_used_password">Your new password must be different from previous used password.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="new_password">New Password</string>
+    <string name="reset">Reset</string>
+    <string name="all_ingredients">All ingredients</string>
+    <string name="add_new_ingredient">Add New Ingredient</string>
+    <string name="ingredient_name">Ingredient Name</string>
+    <string name="expiry_date">Expiry Date</string>
+    <string name="add">Add</string>
+    <string name="goal_name">Goal Name</string>
+    <string name="create">Create</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="ingredient_details">Ingredient Details</string>
+    <string name="no_ingredient_has_recorded">No ingredient has recorded!</string>
+    <string name="ingredient_not_found">Ingredient Not Found!</string>
+
+    <string name="bookmark">bookmark</string>
+    <string name="share">share</string>
+    <string name="recipe_title">Title</string>
+    <string name="recipe_image">recipe image</string>
+    <string name="recipe_ingredients_list">recipe ingredients list</string>
+    <string name="mealType">Meal Type</string>
+    <string name="filter_by">Filter By:</string>
+    <string name="cuisine">Cuisine</string>
+    <string name="exclude">Exclude</string>
+    <string name="include">Include</string>
+    <string name="sort_by">Sort By:</string>
+    <string name="rating">Rating</string>
+    <string name="number_of_ingredients">Number of Ingredients</string>
+    <string name="difficulty_level">Difficulty Level</string>
+    <string name="view_bookmarks">view bookmarks</string>
+    <string name="search_recipes">Search Recipes</string>
+    <string name="back">back</string>
+    <string name="recipe_description">Recipe description</string>
+    <string name="recipeDetailsErrorOccurred">error occurred</string>
+    <string name="recipeDetailsNoInstructionsFound">no instructions found</string>
+    <string name="url_server">https:/zeroxpire.000webhostapp.com/api/</string>
+    <string name="url_create_ingredient">ingredient/create.php</string>
+    <string name="url_read_ingredient">ingredient/read.php</string>
+    <string name="url_delete_ingredient">ingredient/delete.php</string>
+    <string name="url_update_ingredient">ingredient/update.php</string>
+    <string name="url_create_goal">goal/create.php</string>
+    <string name="url_read_goal">goal/read.php</string>
+    <string name="url_delete_goal">goal/delete.php</string>
+    <string name="url_update_goal">goal/update.php</string>
+    <string name="url_getLatestGoalId_goal">goal/getLatestGoalId.php</string>
+    <string name="url_updateGoalIdForIngredient_goal">ingredient/updateGoalIdForIngredient.php</string>
+    <string name="url_clearGoalIdForIngredient_goal">ingredient/clearGoalIdForIngredient.php</string>
+    <string name="url_markAsCompleted_goal">goal/markAsCompleted.php</string>
+    <string name="url_getGoalIngredients_ingredient">ingredient/getGoalIngredients.php</string>
+    <string name="goal_details">Goal Details</string>
+    <string name="url_read_ingredientCategory">ingredientCategory/read.php</string>
+    <string name="url_create_user">user/create.php</string>
+    <string-array name="ingredient_categories">
+        <item>Vegetables</item>
+        <item>Fruits</item>
+        <item>Meat</item>
+        <item>Seafood</item>>
+        <item>Eggs Products</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="filter_options">
+        <item>Type</item>
+        <item>Expiry Date</item>
+        <item>Goal</item>
+        <item>Is it expired?</item>
+    </string-array>
+    <string name="url_read_username">user/getUsername.php</string>
+
+    <string name="recipe_instructions">Recipe instructions</string>
+    <string name="step_with_number">Step %1$d</string>
+    <string name="step">%1$d: </string>
+    <string name="note">Note</string>
+    <string name="type_note_here">Type note here</string>
+    <string name="create_recipe">Create New Recipe</string>
+    <string name="add_instructions">Add instructions</string>
+    <string name="add_ingredients">Add ingredients</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="ingredientsSubtopic">Ingredients</string>
+    <string name="instructionsSubtopic">Instructions</string>
+    <string name="category">Category</string>
+    <string name="recipe_title_hint">Title</string>
+    <string name="create_recipe_top_bar">Create recipe</string>
+    <string name="select_ingredient">Select an ingredient</string>
+    <string name="recipeSearchURL">/recipe/search.php</string>
+    <string name="recipeCreateURL">/recipe/create.php</string>
+    <string name="recipeGetRecommendURL">recipe/getRecommend.php</string>
+    <string name="recipeGetRecipeByIDURL">/recipe/getRecipeByID.php</string>
+    <string name="recipeUpdateRecipeURL">/recipe/update.php</string>
+    <string name="recipeDeleteRecipeURL">/recipe/delete.php</string>
+    <string name="bookmarkGetBookmarksByUserID">/recipe/getBookmarksByUserID.php</string>
+    <string name="bookmarkRemoveFromBookmarks">/recipe/removeFromBookmarks.php</string>
+    <string name="bookmarkRemoveArrayFromBookmarks">/recipe/removeArrayFromBookmarks.php</string>
+    <string name="bookmarkAddToBookmark">/recipe/addToBookmark.php</string>
+    <string name="bookmarkAddToBookmarksFromArray">/recipe/addToBookmarksFromArray.php</string>
+    <string name="commentCreateURL">/comment/create.php</string>
+    <string name="commentGetCommentsByRecipeIDURL">/comment/getCommentsByRecipeID.php</string>
+    <string name="search_on_google">There are no recipes that match your search\nSearch on Google?</string>
+    <string name="include_ingredients">Include ingredients</string>
+    <string name="selected_ingredients">Ingredients:</string>
+    <string name="author">Author: %1$s</string>
+    <string name="recipe_details">Recipe Details</string>
+    <string name="comment">Comment</string>
+    <string name="like">like</string>
+    <string name="likes_counter">likes counter</string>
+    <string name="likes_count">0</string>
+    <string name="reviews">Reviews</string>
+    <string name="reply_to_user">reply to user</string>
+    <string name="date">date</string>
+    <string name="date_format">dd MMM yyyy HH:mm</string>
+    <string name="up_button">up</string>
+    <string name="edit">edit</string>
+    <string name="print">print</string>
+    <string name="close_button">close button</string>
+    <string name="send">Send</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="no_comments">No comments found</string>
+    <string name="no_bookmarks_found">No Bookmarks Found, go Back?</string>
+    <string name="recipe_image_description">Image for recipe</string>
+    <string name="instruction_path_string">recipeInstructions/%1$s.txt</string>
+    <string name="image_path_string">recipeImage/%1$s.jpg</string>
+    <string name="drag">Drag</string>
+    <string name="ingredient_to_include">Select ingredient to include in recipe.</string>
+    <string name="instruction_hint">Recipe instructions</string>
+    <string name="step_hint">step</string>
+
+
+    <string name="default_notification_channel_id">channel_id</string>
+    <string name="url_deleteIngredientWithGoalId">ingredient/deleteIngredientWithGoalId.php</string>
+    <string name="url_delete_user">user/delete.php</string>
+    <string name="recipe_img_error_msg">Select an image for the recipe</string>
+    <string name="ingredient_error_msg">Give at least one instruction</string>
+    <string name="ask_chatgpt">Ask ChatGPT</string>
+    <string name="send_a_message">Send a message</string>
+
+</resources>

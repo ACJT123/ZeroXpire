@@ -1,0 +1,8 @@
+<!-- tab_rounded_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF"/>
+    <corners
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        /> <!-- Set the desired radius for rounded corners -->
+</shape>

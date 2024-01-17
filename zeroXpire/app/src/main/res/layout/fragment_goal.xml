@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.goal.GoalFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <SearchView
+                android:id="@+id/goalSearchView"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/search_view"
+                android:contextClickable="false"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Search goal here"
+                android:theme="@style/AppSearchView"/>
+
+            <TextView
+                android:id="@+id/allGoalsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_below="@id/goalSearchView"
+                android:text="All Goals"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="20dp"
+                android:id="@+id/goalRecyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_below="@id/allGoalsTextView"
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/goal_recycler_view" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/goalRecyclerview"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/goalStatistics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:text="Goal Statistics"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/legend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:layout_weight="1"
+                        android:textSize="12dp"
+                        android:drawableLeft="@drawable/goal"
+                        android:drawableTint="@color/textColor"
+                        android:drawablePadding="-10dp"
+                        android:gravity="center_vertical"
+                        android:textAlignment="center"
+                        android:padding="4dp"
+                        android:text="Active"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:layout_weight="1"
+                        android:textSize="12dp"
+                        android:drawableLeft="@drawable/goal"
+                        android:drawableTint="@color/btnColor"
+                        android:drawablePadding="-10dp"
+                        android:gravity="center_vertical"
+                        android:textAlignment="center"
+                        android:padding="4dp"
+                        android:text="Completed"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:layout_weight="1"
+                        android:textSize="12dp"
+                        android:drawableLeft="@drawable/goal"
+                        android:drawableTint="@color/secondaryColor"
+                        android:drawablePadding="-10dp"
+                        android:gravity="center_vertical"
+                        android:textAlignment="center"
+                        android:padding="4dp"
+                        android:text="Uncompleted"/>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"
+                    android:id="@+id/emptyHereContent"
+                    android:layout_marginTop="200dp"
+                    android:layout_marginBottom="200dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:id="@+id/emptyHereImage"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/empty_here" />
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/emptyHereImage"
+                        android:text="Nothing here, Please create a goal."/>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "856335947735",
+    "project_id": "zeroxpire",
+    "storage_bucket": "zeroxpire.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856335947735:android:219e5580caa2f5b8a79d92",
+        "android_client_info": {
+          "package_name": "my.edu.tarc.zeroxpire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856335947735-7doqvsjgfbvul689cf2peaj3u3anu6cv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZP-4CM4AzF44WH8OZlMiz3MarfazMoTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856335947735-7doqvsjgfbvul689cf2peaj3u3anu6cv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.profile.EnterVeriCodeFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:background="@color/bgColor"
+            app:elevation="-10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/upBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="20dp"
+                    app:srcCompat="?attr/homeAsUpIndicator" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Enter Verification Code"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/sentToEmailDescription"
+                    android:layout_marginStart="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:text=""
+                    android:textSize="15dp" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar"
+            android:layout_marginStart="20dp"
+            android:elevation="0dp"
+            android:orientation="vertical">
+
+            <com.chaos.view.PinView
+                style="@style/PinWidget.PinView"
+                android:id="@+id/veriCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:itemCount="6"
+                android:layout_marginStart="-10dp"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:inputType="number">
+
+            </com.chaos.view.PinView>
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="-10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/didn_t_get_the_code"/>
+
+                <TextView
+                    android:id="@+id/resendCodeBtn"
+                    android:textColor="@color/btnColor"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/PinWidget.PinView"
+                    android:text="@string/resend_code"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/confirmBtn"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="-10dp"
+                android:layout_marginTop="40dp"
+                android:backgroundTint="@color/btnColor"
+                android:text="Continue" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.ingredient.ScannerFragment">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Add a TextView to display the extracted text -->
+    <TextView
+        android:id="@+id/extractedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:visibility="gone" />
+
+    <!-- Your existing buttons -->
+    <Button
+        android:id="@+id/addManualBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Ingredient Manually"
+        android:layout_marginBottom="30dp"
+        android:layout_gravity="bottom|center_horizontal"/>
+
+    <Button
+        android:id="@+id/captureBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capture Image"
+        android:layout_gravity="center_horizontal"/>
+
+    <ImageView
+        android:id="@+id/upBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        app:srcCompat="@drawable/baseline_arrow_back_24" />
+
+</FrameLayout>

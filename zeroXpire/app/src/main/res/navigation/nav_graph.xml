@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/ingredientFragment"
+        android:name="my.edu.tarc.zeroxpire.view.ingredient.IngredientFragment"
+        android:label="Ingredient"
+        tools:layout="@layout/fragment_ingredient" >
+        <action
+            android:id="@+id/action_ingredientFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_ingredientFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_ingredientFragment_to_ingredientDetailFragment"
+            app:destination="@id/ingredientDetailFragment" />
+        <action
+            android:id="@+id/action_ingredientFragment_to_addIngredientFragment"
+            app:destination="@id/addIngredientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_termsAndConditionsFragment"
+            app:destination="@id/termsAndConditionsFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_profileFragment_to_notificationsFragment"
+            app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_addIngredientFragment"
+            app:destination="@id/addIngredientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeFragment"
+        android:name="my.edu.tarc.zeroxpire.recipe.fragment.RecipeFragment"
+        android:label="fragment_recipe"
+        tools:layout="@layout/fragment_recipe" >
+        <action
+            android:id="@+id/action_recipeFragment_to_bookmarks"
+            app:destination="@id/recipeBookmarksFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeFragment" />
+        <action
+            android:id="@+id/action_recipeFragment_to_recipeDetails"
+            app:destination="@id/recipeDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeFragment" />
+        <action
+            android:id="@+id/action_recipeFragment_to_recipeCreateFragment"
+            app:destination="@id/recipeCreateFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeFragment"/>
+        <action
+            android:id="@+id/action_recipeFragment_to_chatGPTChat"
+            app:destination="@id/chatGPTChat"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/termsAndConditionsFragment"
+        android:name="my.edu.tarc.zeroxpire.view.others.TermsAndConditionsFragment"
+        android:label="fragment_terms_and_conditions"
+        tools:layout="@layout/fragment_terms_and_conditions" >
+        <action
+            android:id="@+id/action_termsAndConditionsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="my.edu.tarc.zeroxpire.view.others.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" >
+        <action
+            android:id="@+id/action_notificationsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_enterVeriCodeFragment"
+            app:destination="@id/enterVeriCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterVeriCodeFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.EnterVeriCodeFragment"
+        android:label="fragment_enter_veri_code"
+        tools:layout="@layout/fragment_enter_veri_code" >
+        <action
+            android:id="@+id/action_enterVeriCodeFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_enterVeriCodeFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="my.edu.tarc.zeroxpire.view.profile.ResetPasswordFragment"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password" >
+        <action
+            android:id="@+id/action_resetPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="my.edu.tarc.zeroxpire.view.ingredient.ScannerFragment"
+        android:label="fragment_scanner"
+        tools:layout="@layout/fragment_scanner" >
+        <action
+            android:id="@+id/action_scannerFragment_to_ingredientFragment"
+            app:destination="@id/ingredientFragment" />
+        <action
+            android:id="@+id/action_scannerFragment_to_addIngredientFragment"
+            app:destination="@id/addIngredientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addIngredientFragment"
+        android:name="my.edu.tarc.zeroxpire.view.ingredient.AddIngredientFragment"
+        android:label="fragment_add_ingredient"
+        tools:layout="@layout/fragment_add_ingredient" >
+        <action
+            android:id="@+id/action_addIngredientFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment"
+            app:popUpTo="@id/addIngredientFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_addIngredientFragment_to_ingredientFragment"
+            app:destination="@id/ingredientFragment"
+            app:popUpTo="@id/addIngredientFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/goalFragment"
+        android:name="my.edu.tarc.zeroxpire.view.goal.GoalFragment"
+        android:label="fragment_goal"
+        tools:layout="@layout/fragment_goal" >
+        <action
+            android:id="@+id/action_goalFragment_to_createGoalFragment"
+            app:destination="@id/createGoalFragment" />
+        <action
+            android:id="@+id/action_goalFragment_to_goalDetailFragment"
+            app:destination="@id/goalDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createGoalFragment"
+        android:name="my.edu.tarc.zeroxpire.view.goal.CreateGoalFragment"
+        android:label="fragment_create_goal"
+        tools:layout="@layout/fragment_create_goal" >
+        <action
+            android:id="@+id/action_createGoalFragment_to_goalFragment"
+            app:destination="@id/goalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ingredientDetailFragment"
+        android:name="my.edu.tarc.zeroxpire.view.ingredient.IngredientDetailFragment"
+        android:label="fragment_ingredient_detail"
+        tools:layout="@layout/fragment_ingredient_detail" />
+    <fragment
+        android:id="@+id/goalDetailFragment"
+        android:name="my.edu.tarc.zeroxpire.view.goal.GoalDetailFragment"
+        android:label="fragment_goal_detail"
+        tools:layout="@layout/fragment_goal_detail" >
+        <action
+            android:id="@+id/action_goalDetailFragment_to_goalFragment"
+            app:destination="@id/goalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeCreateFragment"
+        android:name="my.edu.tarc.zeroxpire.recipe.fragment.RecipeCreateFragment"
+        android:label="fragment_recipe_create"
+        tools:layout="@layout/fragment_recipe_create" >
+        <argument
+            android:name="recipeID"
+            app:argType="string"
+            android:defaultValue="-1"/>
+    </fragment>
+    <fragment
+        android:id="@+id/recipeBookmarksFragment"
+        android:name="my.edu.tarc.zeroxpire.recipe.fragment.BookmarksFragment"
+        android:label="fragment_recipe_bookmarks"
+        tools:layout="@layout/fragment_recipe_bookmarks" >
+        <action
+            android:id="@+id/action_bookmarks_to_recipeDetails"
+            app:destination="@id/recipeDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeBookmarksFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeDetailsFragment"
+        android:name="my.edu.tarc.zeroxpire.recipe.fragment.RecipeDetailsFragment"
+        android:label="fragment_recipe_details"
+        tools:layout="@layout/fragment_recipe_details">
+        <argument
+            android:name="recipeID"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_recipeDetailsFragment_to_recipeCreateFragment"
+            app:destination="@id/recipeCreateFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/recipeDetailsFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatGPTChat"
+        android:name="my.edu.tarc.zeroxpire.recipe.fragment.ChatGPTChatFragment"
+        android:label="ChatGPTChat"
+        tools:layout="@layout/fragment_chatgpt_chat">
+        <argument
+            android:name="ingredientNameArrayList"
+            app:argType="java.util.ArrayList" />
+        <argument
+            android:name="recipeName"
+            app:argType="string" />
+    </fragment>
+</navigation>
