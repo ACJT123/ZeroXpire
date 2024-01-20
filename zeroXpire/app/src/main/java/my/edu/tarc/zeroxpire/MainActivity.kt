@@ -53,6 +53,7 @@ import org.json.JSONObject
 import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), IngredientClickListener {
     private lateinit var binding: ActivityMainBinding
@@ -456,8 +457,21 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                         } else {
                             // Handle the case when no dates are found
                             progressDialog.dismiss()
-                            byRecognitionDate()
-                            toast("try again")
+                            val builder = AlertDialog.Builder(this)
+                            builder.setMessage("No dates are found from your ingredient").setCancelable(false)
+                                .setPositiveButton("Try Again") { dialog, id ->
+                                    byRecognitionDate()
+                                }.setNegativeButton("Add Manually") { dialog, id ->
+                                    val bundle = bundleOf(
+                                        "recognizedIngredientName" to recognizedIngredientName,
+                                        "ingredientImage" to imageIngredientNameUri
+                                    )
+                                    navController.navigate(R.id.action_ingredientFragment_to_addIngredientFragment, bundle)
+                                    disableBtmNav()
+                                    dialog.dismiss()
+                                }
+                            val alert = builder.create()
+                            alert.show()
                         }
                     } catch (e: Exception) {
                         Log.d("unparsable", e.toString())
@@ -559,6 +573,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     }
 
     private fun findAllDatesInText(text: String): List<String> {
+//        val possibleDateFormats = loadExpiryDate();
         val possibleDateFormats = listOf(
             SimpleDateFormat("dd.MM.yyyy", Locale.US),
             SimpleDateFormat("dd/MM/yyyy", Locale.US),
@@ -641,6 +656,66 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
         Log.d("Ingredients", selectedIngredients.toString())
     }
+
+    private fun loadExpiryDate(): ArrayList<Any> {
+        progressDialog = ProgressDialog(this)
+        progressDialog?.setMessage("Loading...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
+
+        val url: String = getString(R.string.url_server) + getString(R.string.url_read_expiry_dates)
+
+        val expiryDatesList: ArrayList<Any> = ArrayList()
+
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, url, null,
+            { response ->
+                try {
+                    if (response != null) {
+                        val strResponse = response.toString()
+                        val jsonResponse = JSONObject(strResponse)
+                        val jsonArray: JSONArray = jsonResponse.getJSONArray("records")
+                        val size: Int = jsonArray.length()
+
+                        Log.d("size", size.toString())
+                        if (size > 0) {
+                            for (i in 0 until size) {
+                                val jsonExpiryDates: JSONObject = jsonArray.getJSONObject(i)
+                                val expiryDateId = jsonExpiryDates.getInt("id")
+                                val expiryDateString = jsonExpiryDates.getString("dates")
+                                expiryDatesList.add(SimpleDateFormat(expiryDateString, Locale.US))
+                            }
+                        }
+                        // Process the data as needed
+                    }
+                } catch (e: UnknownHostException) {
+                    Log.d("ContactRepository", "Unknown Host: ${e.message}")
+                    // Handle the UnknownHostException (e.g., show a message to the user)
+                } catch (e: Exception) {
+                    Log.d("Cannot load", "Response: ${e.message}")
+                    // Handle other exceptions (e.g., show a message to the user)
+                } finally {
+                    progressDialog?.dismiss()
+                }
+            },
+            { error ->
+
+                // Dismiss the progress dialog in case of an error
+                progressDialog?.dismiss()
+            }
+        )
+
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+            DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+            0,
+            1f
+        )
+
+        WebDB.getInstance(this).addToRequestQueue(jsonObjectRequest)
+
+        return expiryDatesList
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadIngredient() {
