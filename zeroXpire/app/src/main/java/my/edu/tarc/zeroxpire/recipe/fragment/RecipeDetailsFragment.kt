@@ -236,6 +236,9 @@ class RecipeDetailsFragment : Fragment() {
 
         deleteImageView.setOnClickListener {
             val rootView = activity?.findViewById<View>(android.R.id.content)
+            if (!utilities.deleteAlert(currentView.context)){
+                return@setOnClickListener
+            }
             recipeDetailsViewModel.deleteRecipe(recipeID, 1, currentView) {
                 if (it) {
                     val snackBar = Snackbar.make(

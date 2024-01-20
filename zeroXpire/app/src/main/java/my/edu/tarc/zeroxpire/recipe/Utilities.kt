@@ -1,5 +1,7 @@
 package my.edu.tarc.zeroxpire.recipe
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.view.Gravity
@@ -14,7 +16,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.view.setMargins
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -182,5 +183,26 @@ class Utilities {
 
         })
         return dragHelper
+    }
+
+    fun deleteAlert(context: Context): Boolean {
+        var choice = false
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage(R.string.delete_title)
+        builder.setCancelable(false)
+
+        //Delete button
+        builder.setPositiveButton(R.string.delete_positive) { _, _ ->
+            choice = true
+        }
+        //Cancel button
+        builder.setNegativeButton(R.string.delete_negative) { _, _ ->
+            choice = false
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        return choice
     }
 }
