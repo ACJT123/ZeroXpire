@@ -414,6 +414,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
         val cancelBtn = view.findViewById<ImageView>(R.id.cancelBtn)
         cancelBtn.setOnClickListener {
+            selectedRecognizedName.clear()
             dialog.dismiss()
         }
 
