@@ -106,6 +106,7 @@ Last updated: [Date]\n
     <string name="url_server">https:/zeroxpire.000webhostapp.com/api/</string>
     <string name="url_create_ingredient">ingredient/create.php</string>
     <string name="url_read_ingredient">ingredient/read.php</string>
+    <string name="url_read_expiry_dates">expiryDates/read.php</string>
     <string name="url_delete_ingredient">ingredient/delete.php</string>
     <string name="url_update_ingredient">ingredient/update.php</string>
     <string name="url_create_goal">goal/create.php</string>
