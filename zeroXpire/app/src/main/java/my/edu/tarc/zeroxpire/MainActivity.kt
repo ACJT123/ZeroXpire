@@ -348,6 +348,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
 
     private fun startRecognizeName() {
+        selectedRecognizedName.clear()
         progressDialog.setMessage("Processing image")
         progressDialog.show()
         try {
