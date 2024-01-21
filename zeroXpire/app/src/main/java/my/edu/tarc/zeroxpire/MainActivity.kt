@@ -102,6 +102,10 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     private val channelId = "i.apps.notifications"
     private val description = "Test notification"
 
+    // expiry date and regex list
+    private var expiryDatesList: ArrayList<Any> = ArrayList()
+    private var expiryDatesRegexList: ArrayList<Regex> = ArrayList()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -421,14 +425,16 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
         val continueBtn = view.findViewById<Button>(R.id.continueBtn)
         continueBtn.setOnClickListener {
-            imageIngredientNameUri = imageUri
+            if(selectedRecognizedName.isNotEmpty()){
+                imageIngredientNameUri = imageUri
 //            val combinedRecognizedNames = selectedRecognizedName.joinToString(separator = " ")
 //            recognizedIngredientName = combinedRecognizedName
-            Log.d("recooogName", recognizedIngredientName.toString())
-            dialog.dismiss()
+                Log.d("recooogName", recognizedIngredientName.toString())
+                dialog.dismiss()
 
-            // Now, initiate the date recognition process
-            byRecognitionDate()
+                // Now, initiate the date recognition process
+                byRecognitionDate()
+            }
         }
     }
 
@@ -446,6 +452,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                     progressDialog.dismiss()
 
                     try {
+                        Log.d("text", text.text);
                         val dates = findAllDatesInText(text.text)
                         Log.d("dates", dates.toString())
 
@@ -574,34 +581,51 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     }
 
     private fun findAllDatesInText(text: String): List<String> {
-//        val possibleDateFormats = loadExpiryDate();
-        val possibleDateFormats = listOf(
-            SimpleDateFormat("dd.MM.yyyy", Locale.US),
+        // Load or initialize expiryDatesList and expiryDatesRegexList
+        logg("text $text")
+
+        val expiryDatesList = listOf(
             SimpleDateFormat("dd/MM/yyyy", Locale.US),
+            SimpleDateFormat("dd MM yyyy", Locale.US),
+            SimpleDateFormat("dd.MM.yyyy", Locale.US),
             SimpleDateFormat("MM/dd/yyyy", Locale.US),
             SimpleDateFormat("yyyy-MM-dd", Locale.US),
-            SimpleDateFormat("yyyy/MM/dd", Locale.US)
+            SimpleDateFormat("yyyy/MM/dd", Locale.US),
+            SimpleDateFormat("dd MMM yy", Locale.US)
             // Add more date formats as needed
+        )
+
+        val expiryDatesRegexList = listOf(
+            "^(0[1-9]|[1-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/\\d{4}\$".toRegex(),
+            "^(0[1-9]|[1-2][0-9]|3[0-1]) (0[1-9]|1[0-2]) \\d{4}\$".toRegex(),
+            "^(0[1-9]|[1-2][0-9]|3[0-1])\\.(0[1-9]|1[0-2])\\.\\d{4}\$".toRegex(),
+            "^(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])/\\d{4}\$".toRegex(),
+            "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\$".toRegex(),
+            "^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[1-2][0-9]|3[0-1])\$".toRegex(),
+            "^(0[1-9]|[1-2][0-9]|3[0-1]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{2}\$".toRegex()
+            // Add more regex patterns as needed
         )
 
         val formattedDates = mutableListOf<String>()
 
-        for (dateFormat in possibleDateFormats) {
-            val regex = "\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b".toRegex()
-            val matchResults = regex.findAll(text)
+        for (dateFormat in expiryDatesList) {
+            for (regex in expiryDatesRegexList) {
+                val matchResult = regex.find(text)
 
-            matchResults.forEach { matchResult ->
-                try {
-                    val date = dateFormat.parse(matchResult.value)
-                    date?.let { formattedDates.add(dateFormat.format(it)) }
-                } catch (e: Exception) {
-                    println("Error parsing date: ${e.message}")
+                matchResult?.let {
+                    try {
+                        val date = dateFormat.parse(it.value)
+                        date?.let { formattedDates.add(dateFormat.format(it)) }
+                    } catch (e: Exception) {
+                        println("Error parsing date: ${e.message}")
+                    }
                 }
             }
         }
 
         return formattedDates
     }
+
     private fun disableBtmNav() {
         binding.bottomAppBar.visibility = View.INVISIBLE
         binding.fab.visibility = View.INVISIBLE
@@ -666,7 +690,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
         val url: String = getString(R.string.url_server) + getString(R.string.url_read_expiry_dates)
 
-        val expiryDatesList: ArrayList<Any> = ArrayList()
+        Log.d("url", url);
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
@@ -685,6 +709,9 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                                 val expiryDateId = jsonExpiryDates.getInt("id")
                                 val expiryDateString = jsonExpiryDates.getString("dates")
                                 expiryDatesList.add(SimpleDateFormat(expiryDateString, Locale.US))
+                                val expiryDateRegex = jsonExpiryDates.getString("regex").toRegex()
+                                expiryDatesRegexList.add(expiryDateRegex)
+                                logg("jsonExpirydate $expiryDateString $expiryDateRegex")
                             }
                         }
                         // Process the data as needed
