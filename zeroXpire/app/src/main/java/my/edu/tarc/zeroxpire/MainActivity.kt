@@ -592,7 +592,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
         val formattedDates = mutableListOf<String>()
 
         for (dateFormat in possibleDateFormats) {
-            val regex = "\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b".toRegex()
+            val regex = "\\b\\d{4}[-./]\\d{2}[-./]\\d{2}\\b|\\b\\d{4}/\\d{2}/\\d{2}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b".toRegex()
             val matchResults = regex.findAll(text)
 
             matchResults.forEach { matchResult ->
