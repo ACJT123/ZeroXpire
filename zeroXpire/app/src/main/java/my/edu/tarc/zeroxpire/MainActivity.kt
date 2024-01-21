@@ -364,8 +364,13 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                     Log.d("line", lines.toString())
 
                     // Display the recognized lines/words to the user for selection
-                    displayRecognitionResultsName(lines)
-
+                    if(text.text.isEmpty()){
+                        toast("No names can be found from your capturing, try again.")
+                        byRecognition()
+                    }
+                    else{
+                        displayRecognitionResultsName(lines)
+                    }
                 }
         } catch (e: Exception) {
             toast("Fail to capture the image")
@@ -405,10 +410,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
             adapter.selectedItems.clear()
             byRecognition()
         }
-
-
-
-
 
         view.findViewById<TextView>(R.id.textView).text = "${adapter.itemCount} possible names found:"
         recyclerView.adapter = adapter
