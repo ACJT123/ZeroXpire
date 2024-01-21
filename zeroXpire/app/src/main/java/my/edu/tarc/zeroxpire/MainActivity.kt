@@ -580,19 +580,26 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
     private fun findAllDatesInText(text: String): List<String> {
 //        val possibleDateFormats = loadExpiryDate();
+
+        logg("text $text")
         val possibleDateFormats = listOf(
-            SimpleDateFormat("dd.MM.yyyy", Locale.US),
-            SimpleDateFormat("dd/MM/yyyy", Locale.US),
-            SimpleDateFormat("MM/dd/yyyy", Locale.US),
-            SimpleDateFormat("yyyy-MM-dd", Locale.US),
-            SimpleDateFormat("yyyy/MM/dd", Locale.US)
+            SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+            SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+            SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
+            SimpleDateFormat("dd MMM yy", Locale.getDefault()),
+            SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
+            SimpleDateFormat("dd/MM/yy", Locale.getDefault()),
+
             // Add more date formats as needed
         )
 
         val formattedDates = mutableListOf<String>()
 
         for (dateFormat in possibleDateFormats) {
-            val regex = "\\b\\d{4}[-./]\\d{2}[-./]\\d{2}\\b|\\b\\d{4}/\\d{2}/\\d{2}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b".toRegex()
+            val regex = "\\b\\d{4}[-./]\\d{2}[-./]\\d{2}\\b|\\b\\d{4}/\\d{2}/\\d{2}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}\\s(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\\s\\d{2}\\b|\\b\\d{2}\\s\\d{2}\\s\\d{4}\\b|\\b\\d{2}/\\d{2}/\\d{2}\\b".toRegex()
+
             val matchResults = regex.findAll(text)
 
             matchResults.forEach { matchResult ->

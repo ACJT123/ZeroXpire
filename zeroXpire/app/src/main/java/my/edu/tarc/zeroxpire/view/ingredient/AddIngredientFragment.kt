@@ -95,10 +95,17 @@ class AddIngredientFragment : Fragment() {
             val recognizedDate = arguments?.getString("recognizedExpiryDate").toString()
             val possibleDateFormats = listOf(
                 SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
-                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+                SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
+                SimpleDateFormat("dd MMM yy", Locale.getDefault()),
+                SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd/MM/yy", Locale.getDefault()),
                 // Add more date formats as needed
             )
+
+            //02 OCT 2032
 
             var parsedDate: Date? = null
 
@@ -114,7 +121,8 @@ class AddIngredientFragment : Fragment() {
             }
 
             if (parsedDate != null) {
-                val outputDateFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+                val outputDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
                 val formattedDate = outputDateFormat.format(parsedDate)
                 selectedDate = outputDateFormat.parse(formattedDate)
                 binding.chooseExpiryDate.setText(formattedDate)
@@ -357,7 +365,7 @@ class AddIngredientFragment : Fragment() {
     }
 
     private fun addIngredient(ingredient: Ingredient) {
-        val expiryDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val expiryDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             .format(ingredient.expiryDate)
         val formattedIngredientCategory = if (ingredient.ingredientCategory.contains("&")){
             ingredient.ingredientCategory.replace("&", "%26")
