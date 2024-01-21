@@ -586,7 +586,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
             SimpleDateFormat("MM/dd/yyyy", Locale.US),
             SimpleDateFormat("yyyy-MM-dd", Locale.US),
             SimpleDateFormat("yyyy/MM/dd", Locale.US)
-            // Add more date formats as needed
+            // Add more date formats as needed123123123
         )
 
         val formattedDates = mutableListOf<String>()
