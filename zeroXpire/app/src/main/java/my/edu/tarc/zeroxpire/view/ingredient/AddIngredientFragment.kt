@@ -93,25 +93,24 @@ class AddIngredientFragment : Fragment() {
 
 
             val recognizedDate = arguments?.getString("recognizedExpiryDate").toString()
+            Log.d("recognizedDate", recognizedDate);
             val possibleDateFormats = listOf(
                 SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
                 SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
-                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
-                SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
-                SimpleDateFormat("dd MMM yy", Locale.getDefault()),
-                SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
                 SimpleDateFormat("dd/MM/yy", Locale.getDefault()),
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+                SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
+                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd MMM yy", Locale.getDefault()),
                 // Add more date formats as needed
             )
-
-            //02 OCT 2032
 
             var parsedDate: Date? = null
 
             for (dateFormat in possibleDateFormats) {
                 try {
                     parsedDate = dateFormat.parse(recognizedDate)
+                    Log.d("parsedate", parsedDate.toString());
                     if (parsedDate != null) {
                         break // Successfully parsed, no need to continue
                     }
@@ -121,14 +120,10 @@ class AddIngredientFragment : Fragment() {
             }
 
             if (parsedDate != null) {
-                val outputDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
+                val outputDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
                 val formattedDate = outputDateFormat.format(parsedDate)
                 selectedDate = outputDateFormat.parse(formattedDate)
                 binding.chooseExpiryDate.setText(formattedDate)
-            } else {
-                // Handle the case when none of the formats match
-                // Display an error message or provide feedback to the user
             }
 
         }
@@ -222,7 +217,7 @@ class AddIngredientFragment : Fragment() {
                 calendar.set(year, month, dayOfMonth, 0, 0, 0)
                 selectedDate = calendar.time
                 val selectedDateString =
-                    SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(selectedDate)
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate)
                 binding.chooseExpiryDate.setText(selectedDateString)
                 binding.chooseExpiryDateLayout.isErrorEnabled = false
             },
@@ -257,7 +252,7 @@ class AddIngredientFragment : Fragment() {
             if(fileUri == null){
                 // if the file uri is null, then use the R.drawable.grocery as the image
                 fileUri = Uri.parse("android.resource://my.edu.tarc.zeroxpire/drawable/grocery")
-                
+
             }
 
             fileUri?.let { uri ->
@@ -365,7 +360,7 @@ class AddIngredientFragment : Fragment() {
     }
 
     private fun addIngredient(ingredient: Ingredient) {
-        val expiryDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val expiryDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             .format(ingredient.expiryDate)
         val formattedIngredientCategory = if (ingredient.ingredientCategory.contains("&")){
             ingredient.ingredientCategory.replace("&", "%26")

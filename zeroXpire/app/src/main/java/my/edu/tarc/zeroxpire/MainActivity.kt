@@ -456,7 +456,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
                         if (dates.isNotEmpty()) {
                             recognizedExpiryDates = dates.joinToString(separator = "\n")
-                            Log.d("recooogDate", recognizedExpiryDates.toString())
 
                             // Display the bottom sheet for date selection
                             displayRecognitionResultsDate(recognizedExpiryDates!!)
@@ -498,6 +497,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
 
     private fun displayRecognitionResultsDate(results: String) {
+        logg("results $results")
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_recognition_results, null)
         dialog.setContentView(view)
@@ -511,8 +511,8 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
         val adapter = RecognitionResultsAdapterDate(this,results.split("\n")) { selectedResult ->
             // Handle the selected date here
             // For example, you can assign the selectedResult to recognizedExpiryDates
+            logg("selecetedResult $selectedResult")
             recognizedExpiryDates = selectedResult
-            Log.d("recoggDateResult", recognizedExpiryDates.toString())
         }
 
         view.findViewById<TextView>(R.id.textView).text = "${adapter.itemCount} possible dates found:"
@@ -579,9 +579,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     }
 
     private fun findAllDatesInText(text: String): List<String> {
-//        val possibleDateFormats = loadExpiryDate();
-
-        logg("text $text")
         val possibleDateFormats = listOf(
             SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
             SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),

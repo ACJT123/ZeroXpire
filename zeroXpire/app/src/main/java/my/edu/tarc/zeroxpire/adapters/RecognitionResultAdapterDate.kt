@@ -39,7 +39,7 @@ class RecognitionResultsAdapterDate(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(result: String) {
             val textView = itemView.findViewById<TextView>(R.id.textRecognitionResult)
-            val dateFormats = listOf("dd/MM/yy", "dd MM yyyy", "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy", "dd.MM.yyyy")  // Add your desired date formats
+            val dateFormats = listOf("dd/MM/yy", "dd MM yyyy", "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd MMM yy")  // Add your desired date formats
 
             var parsedDate: Date? = null
 
