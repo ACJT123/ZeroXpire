@@ -203,4 +203,9 @@ Last updated: [Date]\n
     <string name="ask_chatgpt">Ask ChatGPT</string>
     <string name="send_a_message">Send a message</string>
 
+    
+<!--    newly added 20/1/2024-->
+    <string name="delete_title">Are you sure you want to Delete?</string>
+    <string name="delete_positive">Delete</string>
+    <string name="delete_negative">Cancel</string>
 </resources>
