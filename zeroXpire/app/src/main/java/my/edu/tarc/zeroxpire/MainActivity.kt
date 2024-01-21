@@ -364,7 +364,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                     Log.d("line", lines.toString())
 
                     // Display the recognized lines/words to the user for selection
-
                     if(text.text.isEmpty()){
                         toast("There is no any names can be recognized, please try again")
                         byRecognition()
@@ -372,7 +371,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                     else {
                         displayRecognitionResultsName(lines)
                     }
-
                 }
         } catch (e: Exception) {
             toast("Fail to capture the image")
