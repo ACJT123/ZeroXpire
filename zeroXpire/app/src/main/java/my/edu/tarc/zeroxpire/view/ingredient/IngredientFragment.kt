@@ -89,14 +89,14 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
 
 
-        val mainActivity = activity as? MainActivity
-        mainActivity?.loadIngredient()
+//        val mainActivity = activity as? MainActivity
+//        mainActivity?.loadIngredient()
 
         binding.sortBtn.setBackgroundResource(R.drawable.baseline_sort_24)
 
         val adapter = IngredientAdapter(this, goalViewModel)
 
-//        loadIngredient(adapter)
+        loadIngredient(adapter)
 
         loadIngredientViewModel(adapter)
 
@@ -235,7 +235,7 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
             if (eggProductsChip.isChecked) {
                 filteredIngredients = filteredIngredients.filter { ingredient ->
-                    ingredient.ingredientCategory == "Egg Products"
+                    ingredient.ingredientCategory == "Eggs Products"
                 }
             }
 
