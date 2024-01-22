@@ -89,14 +89,14 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
 
 
-        val mainActivity = activity as? MainActivity
-        mainActivity?.loadIngredient()
+//        val mainActivity = activity as? MainActivity
+//        mainActivity?.loadIngredient()
 
         binding.sortBtn.setBackgroundResource(R.drawable.baseline_sort_24)
 
         val adapter = IngredientAdapter(this, goalViewModel)
 
-//        loadIngredient(adapter)
+        loadIngredient(adapter)
 
         loadIngredientViewModel(adapter)
 
