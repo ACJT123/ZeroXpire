@@ -235,7 +235,7 @@ class IngredientFragment : Fragment(), IngredientClickListener {
 
             if (eggProductsChip.isChecked) {
                 filteredIngredients = filteredIngredients.filter { ingredient ->
-                    ingredient.ingredientCategory == "Egg Products"
+                    ingredient.ingredientCategory == "Eggs Products"
                 }
             }
 

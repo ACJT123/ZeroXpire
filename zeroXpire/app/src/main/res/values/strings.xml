@@ -127,7 +127,7 @@ Last updated: [Date]\n
         <item>Meat</item>
         <item>Seafood</item>>
         <item>Eggs Products</item>
-        <item>Other</item>
+        <item>Others</item>
     </string-array>
     <string-array name="filter_options">
         <item>Type</item>
