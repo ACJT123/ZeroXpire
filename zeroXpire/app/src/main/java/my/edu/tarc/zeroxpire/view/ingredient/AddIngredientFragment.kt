@@ -114,7 +114,7 @@ class AddIngredientFragment : Fragment() {
             }
 
             if (parsedDate != null) {
-                val outputDateFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+                val outputDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val formattedDate = outputDateFormat.format(parsedDate)
                 selectedDate = outputDateFormat.parse(formattedDate)
                 binding.chooseExpiryDate.setText(formattedDate)
@@ -131,16 +131,14 @@ class AddIngredientFragment : Fragment() {
         Log.d("ingredientImage!!", fileUri.toString())
         if(fileUri != null){
             binding.ingredientImage.setPadding(0, 0, 0, 0)
-            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
+//            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide.with(requireContext())
                 .load(fileUri)
-                .centerCrop()
                 .into(binding.ingredientImage)
         }
         else{
             Glide.with(requireContext())
                 .load(R.drawable.grocery)
-                .centerCrop()
                 .into(binding.ingredientImage)
         }
 
@@ -214,7 +212,7 @@ class AddIngredientFragment : Fragment() {
                 calendar.set(year, month, dayOfMonth, 0, 0, 0)
                 selectedDate = calendar.time
                 val selectedDateString =
-                    SimpleDateFormat("d/M/yyyy", Locale.getDefault()).format(selectedDate)
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate)
                 binding.chooseExpiryDate.setText(selectedDateString)
                 binding.chooseExpiryDateLayout.isErrorEnabled = false
             },
