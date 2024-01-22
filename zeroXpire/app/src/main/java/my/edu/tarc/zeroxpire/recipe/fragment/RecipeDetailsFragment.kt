@@ -236,36 +236,46 @@ class RecipeDetailsFragment : Fragment() {
 
         deleteImageView.setOnClickListener {
             val rootView = activity?.findViewById<View>(android.R.id.content)
-            if (!utilities.deleteAlert(currentView.context)){
-                return@setOnClickListener
-            }
-            recipeDetailsViewModel.deleteRecipe(recipeID, 1, currentView) {
-                if (it) {
-                    val snackBar = Snackbar.make(
-                        currentView,
-                        "Deleted recipe successfully",
-                        Snackbar.LENGTH_SHORT
-                    )
-                    snackBar.setAction("UNDO",
-                        UndoListener {
-                            recipeDetailsViewModel.deleteRecipe(recipeID, 0, currentView) {
-                                if (rootView != null) {
-                                    Snackbar.make(
-                                        rootView,
-                                        "Recipe restored successfully",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
+            val alertDialogBuilder = utilities.createDeleteAlert(currentView.context)
+
+            //Delete button
+            alertDialogBuilder.setPositiveButton(R.string.delete_positive) { _, _ ->
+                recipeDetailsViewModel.deleteRecipe(recipeID, 1, currentView) {
+                    if (it) {
+                        val snackBar = Snackbar.make(
+                            currentView,
+                            "Deleted recipe successfully",
+                            Snackbar.LENGTH_SHORT
+                        )
+                        snackBar.setAction("UNDO",
+                            UndoListener {
+                                recipeDetailsViewModel.deleteRecipe(recipeID, 0, currentView) {
+                                    if (rootView != null) {
+                                        Snackbar.make(
+                                            rootView,
+                                            "Recipe restored successfully",
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
-                        }
-                    )
-                    snackBar.show()
-                    findNavController().popBackStack()
-                } else {
-                    Snackbar.make(currentView, "Failed to delete recipe", Snackbar.LENGTH_SHORT)
-                        .show()
+                        )
+                        snackBar.show()
+                        findNavController().popBackStack()
+                    } else {
+                        Snackbar.make(currentView, "Failed to delete recipe", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
                 }
+
             }
+            //Cancel button
+            alertDialogBuilder.setNegativeButton(R.string.delete_negative) { _, _ ->
+                //do nothing
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+
         }
 
         // drawer layout

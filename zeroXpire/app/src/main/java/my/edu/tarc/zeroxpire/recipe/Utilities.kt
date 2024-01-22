@@ -185,24 +185,11 @@ class Utilities {
         return dragHelper
     }
 
-    fun deleteAlert(context: Context): Boolean {
-        var choice = false
+    fun createDeleteAlert(context: Context): AlertDialog.Builder {
         val builder = AlertDialog.Builder(context)
         builder.setMessage(R.string.delete_title)
         builder.setCancelable(false)
 
-        //Delete button
-        builder.setPositiveButton(R.string.delete_positive) { _, _ ->
-            choice = true
-        }
-        //Cancel button
-        builder.setNegativeButton(R.string.delete_negative) { _, _ ->
-            choice = false
-        }
-
-        val alertDialog = builder.create()
-        alertDialog.show()
-
-        return choice
+        return builder
     }
 }
