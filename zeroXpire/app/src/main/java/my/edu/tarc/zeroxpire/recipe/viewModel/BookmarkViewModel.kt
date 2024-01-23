@@ -1,5 +1,7 @@
 package my.edu.tarc.zeroxpire.recipe.viewModel
 
+import android.app.ProgressDialog
+import android.content.Context
 import android.util.Log
 import android.view.View
 import com.android.volley.DefaultRetryPolicy
@@ -14,8 +16,11 @@ import org.json.JSONObject
 import java.net.UnknownHostException
 
 class BookmarkViewModel {
+
+    private var progressDialog: ProgressDialog? = null
     fun getBookmarksByUserID(userId: String,
                      view: View,
+                     context: Context,
                      callback: (ArrayList<Recipe>) -> Unit) {
         val url = StringBuilder(view.context.getString(R.string.url_server))
             .append(view.context.getString(R.string.bookmarkGetBookmarksByUserID))
@@ -28,6 +33,7 @@ class BookmarkViewModel {
         val successListener = Response.Listener<JSONObject>
         { response ->
             try {
+
                 if (response != null) {
                     //get response
                     val strResponse = response.toString()
@@ -60,6 +66,7 @@ class BookmarkViewModel {
                         )
                     }
                     callback(recipeArrayList)
+
                 }
             } catch (e: UnknownHostException) {
                 Log.d("Get bookmarks", "Unknown Host: ${e.message}")
