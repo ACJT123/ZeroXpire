@@ -1,6 +1,7 @@
 package my.edu.tarc.zeroxpire.recipe.fragment
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
@@ -59,6 +60,8 @@ class BookmarksFragment : Fragment() {
     private val bookmarkViewModel = BookmarkViewModel()
 
     private lateinit var swipeHelper: ItemTouchHelper
+
+    private var progressDialog: ProgressDialog? = null
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -183,17 +186,25 @@ class BookmarksFragment : Fragment() {
                 val pos = viewHolder.bindingAdapterPosition
                 val recipeID = recipeArrayList[pos].recipeID.toString()
 
+                progressDialog = ProgressDialog(requireContext())
+                progressDialog?.setMessage("Removing...")
+                progressDialog?.setCancelable(false)
+                progressDialog?.show()
                 bookmarkViewModel.removeFromBookmarks(userID, recipeID, currentView) {
-                    val snackBar = Snackbar.make(currentView, "Removed from bookmarks"
-                        , Snackbar.LENGTH_SHORT)
-                    snackBar.setAction("UNDO",
-                        UndoListener {
-                            bookmarkViewModel.addToBookmark(userID, recipeID, currentView) {
-                                loadBookmarks()
+                    if(it) {
+                        val snackBar = Snackbar.make(
+                            currentView, "Removed from bookmarks", Snackbar.LENGTH_SHORT
+                        )
+                        snackBar.setAction("UNDO",
+                            UndoListener {
+                                bookmarkViewModel.addToBookmark(userID, recipeID, currentView) {
+                                    loadBookmarks()
+                                }
                             }
-                        }
-                    )
-                    snackBar.show()
+                        )
+                        snackBar.show()
+                    }
+                    progressDialog?.dismiss()
                 }
 
                 recipeArrayList.removeAt(pos)
@@ -226,7 +237,11 @@ class BookmarksFragment : Fragment() {
     }
 
     private fun loadBookmarks() {
-        bookmarkViewModel.getBookmarksByUserID(userID, currentView) {
+        progressDialog = ProgressDialog(context)
+        progressDialog?.setMessage("Loading...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
+        bookmarkViewModel.getBookmarksByUserID(userID, currentView, requireContext()) {
             if (it.isNotEmpty()) {
                 noBookmarksFoundTextView.isGone = true
                 recyclerView.isGone = false
@@ -236,11 +251,13 @@ class BookmarksFragment : Fragment() {
                 recyclerView.adapter = BookmarkRecyclerViewAdapter(recipeArrayList)
 
                 setUpItemTouchHelper()
+                progressDialog?.dismiss()
             }else {
                 noBookmarksFoundTextView.isGone = false
                 recyclerView.isGone = true
             }
         }
+
     }
 
     class UndoListener(
