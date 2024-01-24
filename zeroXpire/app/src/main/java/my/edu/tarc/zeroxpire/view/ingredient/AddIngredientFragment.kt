@@ -93,10 +93,15 @@ class AddIngredientFragment : Fragment() {
 
 
             val recognizedDate = arguments?.getString("recognizedExpiryDate").toString()
+            Log.d("recognizedDate", recognizedDate);
             val possibleDateFormats = listOf(
                 SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd/MM/yy", Locale.getDefault()),
                 SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
-                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+                SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
+                SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
+                SimpleDateFormat("dd MMM yy", Locale.getDefault()),
                 // Add more date formats as needed
             )
 
@@ -105,6 +110,7 @@ class AddIngredientFragment : Fragment() {
             for (dateFormat in possibleDateFormats) {
                 try {
                     parsedDate = dateFormat.parse(recognizedDate)
+                    Log.d("parsedate", parsedDate.toString());
                     if (parsedDate != null) {
                         break // Successfully parsed, no need to continue
                     }
@@ -114,13 +120,10 @@ class AddIngredientFragment : Fragment() {
             }
 
             if (parsedDate != null) {
-                val outputDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val outputDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
                 val formattedDate = outputDateFormat.format(parsedDate)
                 selectedDate = outputDateFormat.parse(formattedDate)
                 binding.chooseExpiryDate.setText(formattedDate)
-            } else {
-                // Handle the case when none of the formats match
-                // Display an error message or provide feedback to the user
             }
 
         }
@@ -131,7 +134,7 @@ class AddIngredientFragment : Fragment() {
         Log.d("ingredientImage!!", fileUri.toString())
         if(fileUri != null){
             binding.ingredientImage.setPadding(0, 0, 0, 0)
-//            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
+            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide.with(requireContext())
                 .load(fileUri)
                 .into(binding.ingredientImage)
@@ -247,7 +250,7 @@ class AddIngredientFragment : Fragment() {
             if(fileUri == null){
                 // if the file uri is null, then use the R.drawable.grocery as the image
                 fileUri = Uri.parse("android.resource://my.edu.tarc.zeroxpire/drawable/grocery")
-                
+
             }
 
             fileUri?.let { uri ->
