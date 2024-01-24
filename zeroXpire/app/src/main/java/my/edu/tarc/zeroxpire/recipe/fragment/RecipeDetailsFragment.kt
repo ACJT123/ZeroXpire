@@ -3,6 +3,7 @@ package my.edu.tarc.zeroxpire.recipe.fragment
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Typeface
@@ -100,6 +101,8 @@ class RecipeDetailsFragment : Fragment() {
 
     private lateinit var fileUri: Uri
 
+    private var progressDialog: ProgressDialog? = null
+
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -185,6 +188,11 @@ class RecipeDetailsFragment : Fragment() {
             }
         }
 
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.setMessage("Loading...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
+
         recipeDetailsViewModel.getRecipeById(userID, recipeID, currentView) {
             recipe = it
 
@@ -222,6 +230,8 @@ class RecipeDetailsFragment : Fragment() {
             //display image
             Picasso.get().load(recipe.imageLink)
                 .into(currentView.findViewById<ImageView>(R.id.recipeDescImageView))
+
+            progressDialog?.dismiss()
         }
 
         loadComments()

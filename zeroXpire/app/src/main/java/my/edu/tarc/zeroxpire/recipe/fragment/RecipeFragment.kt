@@ -2,6 +2,7 @@ package my.edu.tarc.zeroxpire.recipe.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
@@ -76,6 +77,8 @@ class RecipeFragment : Fragment(), IngredientClickListener {
     private lateinit var selectedIngredientAdapter: IngredientAdapter
     private lateinit var bottomSheetIngredientAdapter: IngredientAdapter
 
+    private var progressDialog: ProgressDialog? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -118,6 +121,10 @@ class RecipeFragment : Fragment(), IngredientClickListener {
         }, goalViewModel)
 
         // recommend recipe based on ingredients
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.setMessage("Loading...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
         recommendRecipes()
 
         initBottomSheet(bottomSheetIngredientAdapter)
@@ -370,9 +377,9 @@ class RecipeFragment : Fragment(), IngredientClickListener {
             recipeArrayList.clear()
             recipeArrayList = it
             initializeRecyclerView()
+            progressDialog?.dismiss()
         }
     }
-
     private fun initView() {
         bookmarksImageView = currentView.findViewById(R.id.bookmarksImageView)
         recipeIncludeIngredientsTextview = currentView.findViewById(R.id.recipeIncludeIngredientsTextview)

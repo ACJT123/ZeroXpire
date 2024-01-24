@@ -348,6 +348,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
 
     private fun startRecognizeName() {
+        selectedRecognizedName.clear()
         progressDialog.setMessage("Processing image")
         progressDialog.show()
         try {
@@ -363,8 +364,13 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
                     Log.d("line", lines.toString())
 
                     // Display the recognized lines/words to the user for selection
-                    displayRecognitionResultsName(lines)
-
+                    if(text.text.isEmpty()){
+                        toast("There is no any names can be recognized, please try again")
+                        byRecognition()
+                    }
+                    else {
+                        displayRecognitionResultsName(lines)
+                    }
                 }
         } catch (e: Exception) {
             toast("Fail to capture the image")

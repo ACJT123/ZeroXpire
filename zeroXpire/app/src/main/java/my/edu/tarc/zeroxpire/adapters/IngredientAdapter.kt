@@ -61,7 +61,7 @@ class IngredientAdapter(
             "Meat" -> R.drawable.meat
             "Seafood" -> R.drawable.seafood
             "Eggs Products" -> R.drawable.eggs_2713474
-            "Other" -> R.drawable.icons_other
+            "Others" -> R.drawable.icons_other
 
             else -> {}
         }
