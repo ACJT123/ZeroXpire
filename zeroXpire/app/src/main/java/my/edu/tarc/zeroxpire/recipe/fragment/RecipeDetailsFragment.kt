@@ -170,18 +170,18 @@ class RecipeDetailsFragment : Fragment() {
 
         bookmarkImageView.setOnClickListener {
             if (recipe.isBookmarked) {
-                bookmarkImageView.setImageResource(R.drawable.baseline_favorite_border_24)
+                bookmarkImageView.setImageResource(R.drawable.baseline_bookmark_border_24)
                 ImageViewCompat.setImageTintList(
                     bookmarkImageView, ColorStateList.valueOf(
-                        ContextCompat.getColor(currentView.context, R.color.red)
+                        ContextCompat.getColor(currentView.context, R.color.btnColor)
                     )
                 )
                 removeBookmark()
             } else {
-                bookmarkImageView.setImageResource(R.drawable.baseline_favorite_24)
+                bookmarkImageView.setImageResource(R.drawable.baseline_bookmark_24)
                 ImageViewCompat.setImageTintList(
                     bookmarkImageView, ColorStateList.valueOf(
-                        ContextCompat.getColor(currentView.context, R.color.red)
+                        ContextCompat.getColor(currentView.context, R.color.btnColor)
                     )
                 )
                 setBookmark()
@@ -205,17 +205,17 @@ class RecipeDetailsFragment : Fragment() {
             }
 
             if (recipe.isBookmarked) {
-                bookmarkImageView.setImageResource(R.drawable.baseline_favorite_24)
+                bookmarkImageView.setImageResource(R.drawable.baseline_bookmark_24)
                 ImageViewCompat.setImageTintList(
                     bookmarkImageView, ColorStateList.valueOf(
-                        ContextCompat.getColor(currentView.context, R.color.red)
+                        ContextCompat.getColor(currentView.context, R.color.btnColor)
                     )
                 )
             } else {
-                bookmarkImageView.setImageResource(R.drawable.baseline_favorite_border_24)
+                bookmarkImageView.setImageResource(R.drawable.baseline_bookmark_border_24)
                 ImageViewCompat.setImageTintList(
                     bookmarkImageView, ColorStateList.valueOf(
-                        ContextCompat.getColor(currentView.context, R.color.red)
+                        ContextCompat.getColor(currentView.context, R.color.btnColor)
                     )
                 )
             }
@@ -246,36 +246,46 @@ class RecipeDetailsFragment : Fragment() {
 
         deleteImageView.setOnClickListener {
             val rootView = activity?.findViewById<View>(android.R.id.content)
-            if (!utilities.deleteAlert(currentView.context)){
-                return@setOnClickListener
-            }
-            recipeDetailsViewModel.deleteRecipe(recipeID, 1, currentView) {
-                if (it) {
-                    val snackBar = Snackbar.make(
-                        currentView,
-                        "Deleted recipe successfully",
-                        Snackbar.LENGTH_SHORT
-                    )
-                    snackBar.setAction("UNDO",
-                        UndoListener {
-                            recipeDetailsViewModel.deleteRecipe(recipeID, 0, currentView) {
-                                if (rootView != null) {
-                                    Snackbar.make(
-                                        rootView,
-                                        "Recipe restored successfully",
-                                        Snackbar.LENGTH_SHORT
-                                    ).show()
+            val alertDialogBuilder = utilities.createDeleteAlert(currentView.context)
+
+            //Delete button
+            alertDialogBuilder.setPositiveButton(R.string.delete_positive) { _, _ ->
+                recipeDetailsViewModel.deleteRecipe(recipeID, 1, currentView) {
+                    if (it) {
+                        val snackBar = Snackbar.make(
+                            currentView,
+                            "Deleted recipe successfully",
+                            Snackbar.LENGTH_SHORT
+                        )
+                        snackBar.setAction("UNDO",
+                            UndoListener {
+                                recipeDetailsViewModel.deleteRecipe(recipeID, 0, currentView) {
+                                    if (rootView != null) {
+                                        Snackbar.make(
+                                            rootView,
+                                            "Recipe restored successfully",
+                                            Snackbar.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
-                        }
-                    )
-                    snackBar.show()
-                    findNavController().popBackStack()
-                } else {
-                    Snackbar.make(currentView, "Failed to delete recipe", Snackbar.LENGTH_SHORT)
-                        .show()
+                        )
+                        snackBar.show()
+                        findNavController().popBackStack()
+                    } else {
+                        Snackbar.make(currentView, "Failed to delete recipe", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
                 }
+
             }
+            //Cancel button
+            alertDialogBuilder.setNegativeButton(R.string.delete_negative) { _, _ ->
+                //do nothing
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+
         }
 
         // drawer layout
@@ -464,12 +474,12 @@ class RecipeDetailsFragment : Fragment() {
                 snackBar.setAction("UNDO",
                     UndoListener {
                         bookmarkViewModel.addToBookmark(userID, recipeID, currentView) {
-                            bookmarkImageView.setImageResource(R.drawable.baseline_favorite_24)
+                            bookmarkImageView.setImageResource(R.drawable.baseline_bookmark_24)
                             ImageViewCompat.setImageTintList(
                                 bookmarkImageView, ColorStateList.valueOf(
                                     ContextCompat.getColor(
                                         currentView.context,
-                                        R.color.red
+                                        R.color.btnColor
                                     )
                                 )
                             )

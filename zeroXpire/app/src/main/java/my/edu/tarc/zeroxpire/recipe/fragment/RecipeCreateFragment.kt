@@ -19,7 +19,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
@@ -53,8 +52,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.BufferedReader
 import java.io.StringReader
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Collections
 
 class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
@@ -233,6 +231,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         saveImageView.setOnClickListener {
             val instructionArrayList = ArrayList<String>()
 
+            instructionRecyclerViewAdapter.saveCurrentFocus()
             instructionArrayList.addAll(instructionsArrayList.filterNot { it.isBlank() })
 
             if (isAllFilledIn(instructionArrayList, recipe.recipeID)) {
@@ -243,6 +242,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         createBtn.setOnClickListener {
             val instructionArrayList = ArrayList<String>()
 
+            instructionRecyclerViewAdapter.saveCurrentFocus()
             instructionArrayList.addAll(instructionsArrayList.filterNot { it.isBlank() })
 
             if (isAllFilledIn(instructionArrayList, recipe.recipeID)) {
