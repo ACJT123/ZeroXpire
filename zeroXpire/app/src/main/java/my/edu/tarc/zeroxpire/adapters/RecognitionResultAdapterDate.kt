@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import my.edu.tarc.zeroxpire.R
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class RecognitionResultsAdapterDate(
     private val context: Context,
@@ -36,7 +39,30 @@ class RecognitionResultsAdapterDate(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(result: String) {
             val textView = itemView.findViewById<TextView>(R.id.textRecognitionResult)
-            textView.text = result
+            val dateFormats = listOf("dd/MM/yy", "dd MM yyyy", "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy", "dd.MM.yyyy", "dd MMM yy")  // Add your desired date formats
+
+            var parsedDate: Date? = null
+
+            for (format in dateFormats) {
+                val dateFormat = SimpleDateFormat(format)
+                try {
+                    parsedDate = dateFormat.parse(result)
+                    if (parsedDate != null) {
+                        break  // Break out of the loop if parsing is successful
+                    }
+                } catch (e: ParseException) {
+                    // Continue to the next format if parsing fails
+                }
+            }
+
+            if (parsedDate != null) {
+                val outputFormat = SimpleDateFormat("dd/MM/yyyy")  // Choose your desired output format
+                val formattedDate = outputFormat.format(parsedDate)
+                textView.text = formattedDate
+            } else {
+                textView.text = "Error parsing date"
+            }
+
 
             // Update UI based on selected state
             if (selectedItem == result) {

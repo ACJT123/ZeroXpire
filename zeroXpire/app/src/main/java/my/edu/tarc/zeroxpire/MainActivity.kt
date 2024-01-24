@@ -462,7 +462,6 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
                         if (dates.isNotEmpty()) {
                             recognizedExpiryDates = dates.joinToString(separator = "\n")
-                            Log.d("recooogDate", recognizedExpiryDates.toString())
 
                             // Display the bottom sheet for date selection
                             displayRecognitionResultsDate(recognizedExpiryDates!!)
@@ -504,6 +503,7 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
 
 
     private fun displayRecognitionResultsDate(results: String) {
+        logg("results $results")
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_recognition_results, null)
         dialog.setContentView(view)
@@ -517,8 +517,8 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
         val adapter = RecognitionResultsAdapterDate(this,results.split("\n")) { selectedResult ->
             // Handle the selected date here
             // For example, you can assign the selectedResult to recognizedExpiryDates
+            logg("selecetedResult $selectedResult")
             recognizedExpiryDates = selectedResult
-            Log.d("recoggDateResult", recognizedExpiryDates.toString())
         }
 
         view.findViewById<TextView>(R.id.textView).text = "${adapter.itemCount} possible dates found:"
@@ -585,20 +585,24 @@ class MainActivity : AppCompatActivity(), IngredientClickListener {
     }
 
     private fun findAllDatesInText(text: String): List<String> {
-//        val possibleDateFormats = loadExpiryDate();
         val possibleDateFormats = listOf(
-            SimpleDateFormat("dd.MM.yyyy", Locale.US),
-            SimpleDateFormat("dd/MM/yyyy", Locale.US),
-            SimpleDateFormat("MM/dd/yyyy", Locale.US),
-            SimpleDateFormat("yyyy-MM-dd", Locale.US),
-            SimpleDateFormat("yyyy/MM/dd", Locale.US)
+            SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()),
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
+            SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()),
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+            SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()),
+            SimpleDateFormat("dd MMM yy", Locale.getDefault()),
+            SimpleDateFormat("dd MM yyyy", Locale.getDefault()),
+            SimpleDateFormat("dd/MM/yy", Locale.getDefault()),
+
             // Add more date formats as needed
         )
 
         val formattedDates = mutableListOf<String>()
 
         for (dateFormat in possibleDateFormats) {
-            val regex = "\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b".toRegex()
+            val regex = "\\b\\d{4}[-./]\\d{2}[-./]\\d{2}\\b|\\b\\d{4}/\\d{2}/\\d{2}\\b|\\b\\d{2}[./-]\\d{2}[./-]\\d{4}\\b|\\b\\d{2}\\s(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\\s\\d{2}\\b|\\b\\d{2}\\s\\d{2}\\s\\d{4}\\b|\\b\\d{2}/\\d{2}/\\d{2}\\b".toRegex()
+
             val matchResults = regex.findAll(text)
 
             matchResults.forEach { matchResult ->
