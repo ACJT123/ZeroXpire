@@ -95,13 +95,13 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
     private lateinit var ingredientRecyclerView: RecyclerView
 
     private var selectedIngredients: MutableList<Ingredient> = mutableListOf()
-    private var selectedIngredientsTemporary: MutableList<Ingredient> = mutableListOf()
-    private var getFromStoredIngredients: MutableList<Ingredient> = mutableListOf()
+    private var getIngredientFromDB: MutableList<Ingredient> = mutableListOf()
+    private var bottomSheetSelectedIngredient: MutableList<Ingredient> = mutableListOf()
 
     private lateinit var bottomSheetIngredientAdapter: IngredientAdapter
     private lateinit var selectedIngredientAdapter: IngredientAdapter
 
-    private val goalViewModel : GoalViewModel by activityViewModels()
+    private val goalViewModel: GoalViewModel by activityViewModels()
     private val ingredientViewModel: IngredientViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -117,7 +117,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         val args: RecipeCreateFragmentArgs by navArgs()
         recipe.recipeID = args.recipeID.toInt()
 
-        Log.d("test","recipeid: ${recipe.recipeID}")
+        Log.d("test", "recipeid: ${recipe.recipeID}")
 
         ingredientErrorMsg = currentView.findViewById(R.id.ingredientErrorMsg)
         recipeImageErrorMsg = currentView.findViewById(R.id.recipeImageErrorMsg)
@@ -142,10 +142,9 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         bottomSheetIngredientAdapter = IngredientAdapter(this, goalViewModel)
 
         selectedIngredients.clear()
-        selectedIngredientsTemporary.clear()
-        getFromStoredIngredients.clear()
+        getIngredientFromDB.clear()
 
-        getFromStoredIngredients =  ingredientViewModel.ingredientList.value as MutableList<Ingredient>
+        getIngredientFromDB = ingredientViewModel.ingredientList.value as MutableList<Ingredient>
 
         Log.d("recipeID create", "${recipe.recipeID}")
         if (recipe.recipeID >= 0) {
@@ -157,11 +156,9 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
                 titleTextInputEditText.setText(recipe.title)
 
-                Log.d("getFromStoredIngredients", "$getFromStoredIngredients")
-
                 val tempArr = ArrayList<Ingredient>()
                 recipe.ingredientIDArrayList.forEach {
-                    getFromStoredIngredients.map { ingredient ->
+                    getIngredientFromDB.map { ingredient ->
                         if (ingredient.ingredientId == it.toInt()) {
                             selectedIngredients.add(ingredient)
                             tempArr.add(ingredient)
@@ -169,7 +166,6 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                     }
                 }
 
-                selectedIngredientsTemporary.addAll(selectedIngredients)
                 selectedIngredientAdapter.setIngredient(selectedIngredients)
 
 
@@ -191,9 +187,11 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
 
                     activity!!.runOnUiThread {
-                        instructionRecyclerView.layoutManager = LinearLayoutManager(currentView.context)
+                        instructionRecyclerView.layoutManager =
+                            LinearLayoutManager(currentView.context)
 
-                        instructionRecyclerViewAdapter = InstructionRecyclerViewAdapter(currentContext, instructionsArrayList)
+                        instructionRecyclerViewAdapter =
+                            InstructionRecyclerViewAdapter(currentContext, instructionsArrayList)
                         instructionRecyclerView.adapter = instructionRecyclerViewAdapter
                         setUpSwipeHelper()
                         setupDragHelper()
@@ -203,12 +201,13 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
                 noteTextInputEditText.setText(recipe.note)
             }
-        }else {
+        } else {
             instructionsArrayList.add("")
 
             instructionRecyclerView.layoutManager = LinearLayoutManager(currentView.context)
 
-            instructionRecyclerViewAdapter = InstructionRecyclerViewAdapter(currentContext, instructionsArrayList)
+            instructionRecyclerViewAdapter =
+                InstructionRecyclerViewAdapter(currentContext, instructionsArrayList)
             instructionRecyclerView.adapter = instructionRecyclerViewAdapter
             setUpSwipeHelper()
             setupDragHelper()
@@ -246,7 +245,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
             instructionArrayList.addAll(instructionsArrayList.filterNot { it.isBlank() })
 
-            if(isAllFilledIn(instructionArrayList, recipe.recipeID)) {
+            if (isAllFilledIn(instructionArrayList, recipe.recipeID)) {
                 createOrEditRecipe(instructionArrayList)
             }
         }
@@ -260,7 +259,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             fileUri = data?.data!!
-            Log.d("select image" ,"$fileUri")
+            Log.d("select image", "$fileUri")
             try {
                 val bitmap: Bitmap =
                     MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, fileUri)
@@ -290,7 +289,8 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.bindingAdapterPosition
-                val instructionTIED = viewHolder.itemView.findViewById<TextInputEditText>(R.id.instructionTextInputEditText)
+                val instructionTIED =
+                    viewHolder.itemView.findViewById<TextInputEditText>(R.id.instructionTextInputEditText)
                 instructionTIED.clearFocus()
 
                 //save text for undo
@@ -305,7 +305,8 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                 instructionRecyclerViewAdapter.notifyItemRemoved(pos)
                 instructionRecyclerViewAdapter.notifyItemRangeChanged(pos, size)
 
-                val snackBar = Snackbar.make(currentView, "Removed step $pos", Snackbar.LENGTH_SHORT)
+                val snackBar =
+                    Snackbar.make(currentView, "Removed step $pos", Snackbar.LENGTH_SHORT)
                 snackBar.setAction("UNDO",
                     UndoListener {
                         instructionRecyclerViewAdapter.addInstruction(pos, text)
@@ -367,7 +368,8 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                 if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
                     var i = 0
                     instructionRecyclerView.forEach {
-                        val instructionTIED = it.findViewById<TextInputEditText>(R.id.instructionTextInputEditText)
+                        val instructionTIED =
+                            it.findViewById<TextInputEditText>(R.id.instructionTextInputEditText)
                         instructionsArrayList[i] = instructionTIED.text.toString()
                         i++
                     }
@@ -386,39 +388,49 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_dialog, null)
         bottomSheetDialog.setContentView(bottomSheetView)
 
-        bottomSheetRecyclerView = bottomSheetView.findViewById(R.id.recyclerviewNumIngredientChoosed)
+        bottomSheetRecyclerView =
+            bottomSheetView.findViewById(R.id.recyclerviewNumIngredientChoosed)
         bottomSheetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         bottomSheetRecyclerView.adapter = adapter
 
         val addBtn = bottomSheetView.findViewById<Button>(R.id.addBtn)
-        addBtn.isEnabled = selectedIngredientsTemporary.isNotEmpty()
+        addBtn.isEnabled = bottomSheetSelectedIngredient.isNotEmpty()
 
         addBtn.setOnClickListener {
-            selectedIngredients = selectedIngredientsTemporary.toMutableList()
-            Log.d("Temporary -> Selected", selectedIngredients.toString())
             bottomSheetDialog.dismiss()
+
+            bottomSheetSelectedIngredient.clear()
+
+            selectedIngredientAdapter.setIngredient(selectedIngredients)
+
+            bottomSheetDialog.setOnDismissListener {
+                selectedIngredients.clear()
+            }
 
             // Notify the selectedIngredientAdapter about the data change
             selectedIngredientAdapter.setIngredient(selectedIngredients)
-            Log.d("minus",getFromStoredIngredients.minus(selectedIngredients).toString())
+            Log.d("minus", getIngredientFromDB.minus(selectedIngredients).toString())
             bottomSheetDialog.setOnDismissListener {
-                selectedIngredientsTemporary.clear()
-                Log.d("minus",getFromStoredIngredients.minus(selectedIngredients).toString())
+                bottomSheetSelectedIngredient.clear()
+                Log.d("minus", getIngredientFromDB.minus(selectedIngredients).toString())
 
             }
-            if(selectedIngredients.isNotEmpty()){
+            if (selectedIngredients.isNotEmpty()) {
                 Log.d("Selected is not empty", selectedIngredients.size.toString())
-                currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone = true
+                currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone =
+                    true
                 ingredientRecyclerView.isGone = false
 
-                currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).text = "Total: ${selectedIngredients.size} ingredient"
-            }
-            else {
+                currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).text =
+                    "Total: ${selectedIngredients.size} ingredient"
+            } else {
                 Log.d("Selected is empty", selectedIngredients.size.toString())
-                currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone = false
+                currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone =
+                    false
                 ingredientRecyclerView.isGone = true
 
-                currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).visibility = View.INVISIBLE
+                currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).visibility =
+                    View.INVISIBLE
             }
         }
 
@@ -428,12 +440,13 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
         bottomSheetDialog.show()
 
-        adapter.setIngredient(getFromStoredIngredients.minus(selectedIngredients.toSet()))
+        adapter.setIngredient(getIngredientFromDB.minus(selectedIngredients.toSet()))
         adapter.notifyDataSetChanged()
     }
 
     override fun onIngredientClick(ingredient: Ingredient) {
-        bottomSheetRecyclerView = bottomSheetView.findViewById(R.id.recyclerviewNumIngredientChoosed)
+        bottomSheetRecyclerView =
+            bottomSheetView.findViewById(R.id.recyclerviewNumIngredientChoosed)
         val layoutManager = bottomSheetRecyclerView.layoutManager
 
         if (layoutManager is LinearLayoutManager) {
@@ -441,37 +454,41 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
             val clickedItemView = layoutManager.findViewByPosition(clickedItemPosition)
 
             // Check if the ingredient is not already in the selectedIngredientsTemporary list
-            if (!selectedIngredientsTemporary.contains(ingredient)) {
+            if (!selectedIngredients.contains(ingredient)) {
                 // Change the background color of the clicked item to the selected color
-                clickedItemView?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.btnColor))
+                clickedItemView?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.btnColor
+                    )
+                )
                 clickedItemView?.tag = true
 
                 // Select the ingredient
-                selectedIngredientsTemporary.add(ingredient)
+                selectedIngredients.add(ingredient)
+                bottomSheetSelectedIngredient.add(ingredient)
             } else {
                 // If the ingredient is already in the list, remove it to toggle the selection
                 clickedItemView?.setBackgroundColor(Color.WHITE)
                 clickedItemView?.tag = false
-                selectedIngredientsTemporary.remove(ingredient)
+                selectedIngredients.remove(ingredient)
+                bottomSheetSelectedIngredient.remove(ingredient)
             }
 //            }
         }
 
         val addBtn = bottomSheetView.findViewById<Button>(R.id.addBtn)
-        addBtn.isEnabled = selectedIngredientsTemporary.isNotEmpty()
+        addBtn.isEnabled = bottomSheetSelectedIngredient.isNotEmpty()
 
         val selectedTextView = bottomSheetView.findViewById<TextView>(R.id.selectedTextView)
-        selectedTextView.text = if(selectedIngredientsTemporary.isEmpty()){
+        selectedTextView.text = if (bottomSheetSelectedIngredient.isEmpty()) {
             "Select ingredients that you want to clear."
+        } else {
+            "${bottomSheetSelectedIngredient.size} ingredient selected."
         }
-        else{
-            "${selectedIngredientsTemporary.size} ingredient selected."
-        }
-
-        Log.d("SelectedIngredients", selectedIngredientsTemporary.toString())
     }
 
-    private fun selectedIngredientRecyclerReview(adapter: IngredientAdapter){
+    private fun selectedIngredientRecyclerReview(adapter: IngredientAdapter) {
         ingredientRecyclerView = currentView.findViewById(R.id.ingredientRecyclerView)
         ingredientRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         ingredientRecyclerView.adapter = adapter
@@ -501,15 +518,21 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                         adapter.notifyItemRemoved(position)
                         dialog.dismiss()
                         if (selectedIngredients.isEmpty()) {
-                            currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone = false
+                            currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone =
+                                false
                             ingredientRecyclerView.isGone = true
 
-                            currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).visibility = View.INVISIBLE
+                            currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).visibility =
+                                View.VISIBLE
+                            currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).text =
+                                "Select ingredient to include in recipe."
                         } else {
-                            currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone = true
+                            currentView.findViewById<ConstraintLayout>(R.id.noIngredientHasRecordedLayout).isGone =
+                                true
                             ingredientRecyclerView.isGone = false
 
-                            currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).text = "Total: ${selectedIngredients.size} ingredient"
+                            currentView.findViewById<TextView>(R.id.numOfSelectedIngredientsTextView).text =
+                                "Total: ${selectedIngredients.size} ingredient"
                         }
                     }.setNegativeButton("Cancel") { dialog, id ->
                         dialog.dismiss()
@@ -564,7 +587,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                         .show()
                     findNavController().popBackStack()
                 }
-            }else {
+            } else {
                 recipeTemp.imageLink = recipe.imageLink
                 recipeDetailsViewModel.editRecipeWithoutImage(
                     ingredientsMutableList = selectedIngredients,
@@ -578,7 +601,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                     findNavController().popBackStack()
                 }
             }
-        }else {
+        } else {
             recipeDetailsViewModel.createRecipe(
                 userId = userID,
                 ingredientsMutableList = selectedIngredients,
@@ -596,7 +619,8 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
     private fun isAllFilledIn(instructionArrayList: ArrayList<String>, recipeID: Int = 0): Boolean {
         val viewTemp = instructionRecyclerView.getChildAt(0)
-        val textInputLayoutTemp = viewTemp.findViewById<TextInputLayout>(R.id.instructionTextInputLayout)
+        val textInputLayoutTemp =
+            viewTemp.findViewById<TextInputLayout>(R.id.instructionTextInputLayout)
         var isAllFilledIn = true
 
         if (recipeID == 0) {
@@ -609,7 +633,7 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
         if (titleTextInputEditText.text.isNullOrBlank()) {
             titleTextInputLayout.error = "Title cannot be blank"
             isAllFilledIn = false
-        }else {
+        } else {
             titleTextInputLayout.error = null
         }
 
