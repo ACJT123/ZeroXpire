@@ -134,7 +134,7 @@ class AddIngredientFragment : Fragment() {
         Log.d("ingredientImage!!", fileUri.toString())
         if(fileUri != null){
             binding.ingredientImage.setPadding(0, 0, 0, 0)
-//            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
+            binding.ingredientImage.scaleType = ImageView.ScaleType.CENTER_CROP
             Glide.with(requireContext())
                 .load(fileUri)
                 .into(binding.ingredientImage)
