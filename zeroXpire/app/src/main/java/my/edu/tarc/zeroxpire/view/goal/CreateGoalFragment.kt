@@ -45,19 +45,18 @@ import androidx.lifecycle.Observer
 import kotlin.math.min
 
 
-class CreateGoalFragment : Fragment(), IngredientClickListener{
+class CreateGoalFragment : Fragment(), IngredientClickListener {
     private lateinit var binding: FragmentCreateGoalBinding
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var selectedCompletionDate: Date? = null
 
-    val goalViewModel : GoalViewModel by activityViewModels()
+    val goalViewModel: GoalViewModel by activityViewModels()
     val ingredientViewModel: IngredientViewModel by activityViewModels()
 
     private var selectedIngredients: MutableList<Ingredient> = mutableListOf()
-    private var selectedIngredientsTemporary: MutableList<Ingredient> = mutableListOf()
-    private var storedIngredients: MutableList<Ingredient> = mutableListOf()
-    private var getFromStoredIngredients: MutableList<Ingredient> = mutableListOf()
+    private var getIngredientFromDB: MutableList<Ingredient> = mutableListOf()
+    private var bottomSheetSelectedIngredient: MutableList<Ingredient> = mutableListOf()
 
     private lateinit var bottomSheetIngredientAdapter: IngredientAdapter
     private lateinit var selectedIngredientAdapter: IngredientAdapter
@@ -87,6 +86,7 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
         binding = FragmentCreateGoalBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -101,16 +101,14 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
 
         val addIngredientDialogBtn = binding.addIngredientDialogBtn
 
-
-        storedIngredients.clear()
         selectedIngredients.clear()
-        selectedIngredientsTemporary.clear()
-        getFromStoredIngredients.clear()
+        getIngredientFromDB.clear()
 
-        ingredientViewModel.getAllIngredientsWithoutGoalId().observe(viewLifecycleOwner, Observer {ingredients->
-            getFromStoredIngredients = ingredients as MutableList<Ingredient>
+        ingredientViewModel.getAllIngredientsWithoutGoalId()
+            .observe(viewLifecycleOwner, Observer { ingredients ->
+                getIngredientFromDB = ingredients as MutableList<Ingredient>
 
-        })
+            })
 
         addIngredientDialogBtn.setOnClickListener {
             showBottomSheetDialog(bottomSheetIngredientAdapter)
@@ -130,15 +128,15 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
         navBack()
     }
 
-    private fun storeGoal(){
+    private fun storeGoal() {
         val goalName = binding.enterGoalName.text.toString()
         val targetCompletionDate = selectedDate
 
-        val hour =  binding.timePicker.hour
-        val minute =  binding.timePicker.minute
+        val hour = binding.timePicker.hour
+        val minute = binding.timePicker.minute
         logg("hour: $hour , minute: $minute")
 
-        if (goalName.isEmpty()){
+        if (goalName.isEmpty()) {
             binding.enterGoalName.error = "Please enter the goal's name"
             binding.enterGoalName.requestFocus()
 
@@ -152,8 +150,9 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
             return
         }
 
-        if(selectedIngredients.isEmpty()){
-            Toast.makeText(requireContext(), "Please choose the ingredient", Toast.LENGTH_SHORT).show()
+        if (selectedIngredients.isEmpty()) {
+            Toast.makeText(requireContext(), "Please choose the ingredient", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -165,14 +164,10 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
         val targetCompletionDateConverted = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             .format(targetCompletionDate)
 
-
-
         val url = getString(R.string.url_server) + getString(R.string.url_create_goal) +
                 "?goalName=" + goalName +
                 "&targetCompletionDate=" + targetCompletionDateConverted + " $hour:$minute:00" +
                 "&userId=" + auth.currentUser?.uid
-
-        Log.d("urllllllllllll", url)
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.GET, url, null,
@@ -186,16 +181,20 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
                         if (success == "1") {
                             // Goal inserted successfully, now get the last inserted ID
                             val goalId: Int = jsonResponse.getInt("lastInsertedId")
-                            Log.d("goalId", goalId.toString())
+
                             // Use the goalId as needed
                             updateGoalIdForIngredient(goalId)
-//                            Toast.makeText(requireContext(), "Goal inserted with ID: $goalId", Toast.LENGTH_SHORT).show()
+                            //                            Toast.makeText(requireContext(), "Goal inserted with ID: $goalId", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(requireContext(), getString(R.string.recipeDetailsErrorOccurred), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.recipeDetailsErrorOccurred),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 } catch (e: Exception) {
-//                    updateManually()
+                    //                    updateManually()
                     Log.d("Fragment", "Response: %s".format(e.message.toString()))
                 }
             },
@@ -203,59 +202,54 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
                 Log.d("Second", "Response : %s".format(error.message.toString()))
             }
         )
-        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
+        jsonObjectRequest.retryPolicy =
+            DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
         WebDB.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
 
     }
 
-    private fun updateGoalIdForIngredient(goalId: Int){
-//        var url: String? = null
-//        for(ingredient in selectedIngredients){
+    private fun updateGoalIdForIngredient(goalId: Int) {
+        val ingredientIds =
+            selectedIngredients.joinToString("&ingredientIDArr[]=") { it.ingredientId.toString() }
+        val url =
+            getString(R.string.url_server) + getString(R.string.url_updateGoalIdForIngredient_goal) +
+                    "?goalId=" + goalId + "&ingredientIDArr[]=$ingredientIds"
 
-        val ingredientIds = selectedIngredients.joinToString("&ingredientIDArr[]=") { it.ingredientId.toString() }
-        val url = getString(R.string.url_server) + getString(R.string.url_updateGoalIdForIngredient_goal) +
-                "?goalId=" + goalId + "&ingredientIDArr[]=$ingredientIds"
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url, null,
+            { response ->
+                try {
+                    if (response != null) {
+                        val strResponse = response.toString()
+                        val jsonResponse = JSONObject(strResponse)
+                        val success: String = jsonResponse.get("success").toString()
 
-//            Log.d("ingredientID", ingredient.ingredientId.toString()
-            Log.d("urlCreateGOal", url)
-            Log.d("goalIdCreateGoal", goalId.toString())
-            val jsonObjectRequest = JsonObjectRequest(
-                Request.Method.POST, url, null,
-                { response ->
-                    try {
-                        if(response!=null){
-                            val strResponse = response.toString()
-                            val jsonResponse = JSONObject(strResponse)
-                            val success: String = jsonResponse.get("success").toString()
+                        if (success == "1") {
 
-                            if (success == "1") {
-
-                            } else {
-                                //toast(requireContext(), "Failed to update.")
-                            }
+                        } else {
+                            //toast(requireContext(), "Failed to update.")
                         }
                     }
-                    catch (e: java.lang.Exception) {
-                        Log.d("Update", "Response: %s".format(e.message.toString()))
-                    }
-                },
-                { error ->
-                    // Handle error response, if required
-                    Log.d("Update", "Error Response: ${error.message}")
+                } catch (e: java.lang.Exception) {
+                    Log.d("Update", "Response: %s".format(e.message.toString()))
                 }
-            )
-            jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
-            WebDB.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
-//        }
+            },
+            { error ->
+                // Handle error response, if required
+                Log.d("Update", "Error Response: ${error.message}")
+            }
+        )
+        jsonObjectRequest.retryPolicy =
+            DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 1f)
+        WebDB.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
 
         progressDialog?.dismiss()
-//        Toast.makeText(requireContext(), "GoalID is updated successfully.", Toast.LENGTH_SHORT).show()
         Toast.makeText(requireContext(), "Goal is created successfully.", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
 
     }
 
-    private fun selectedIngredientRecyclerReview(adapter: IngredientAdapter){
+    private fun selectedIngredientRecyclerReview(adapter: IngredientAdapter) {
         recyclerView = binding.selectedIngredientRecyclerViewGoal
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -274,40 +268,32 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
         recyclerView.adapter = adapter
 
         val addBtn = bottomSheetView.findViewById<Button>(R.id.addBtn)
-        addBtn.isEnabled = selectedIngredientsTemporary.isNotEmpty()
+        addBtn.isEnabled = selectedIngredients.isNotEmpty()
 
         addBtn.setOnClickListener {
-            selectedIngredients = selectedIngredientsTemporary.toMutableList()
-            Log.d("Temporary -> Selected", selectedIngredients.toString())
             bottomSheetDialog.dismiss()
 
-            // Notify the selectedIngredientAdapter about the data change
-            selectedIngredientAdapter.setIngredient(selectedIngredients)
-            Log.d("minus",getFromStoredIngredients.minus(selectedIngredients).toString())
-            bottomSheetDialog.setOnDismissListener {
-                selectedIngredientsTemporary.clear()
-                Log.d("minus",getFromStoredIngredients.minus(selectedIngredients).toString())
+            bottomSheetSelectedIngredient.clear()
 
+            selectedIngredientAdapter.setIngredient(selectedIngredients)
+
+            bottomSheetDialog.setOnDismissListener {
+                selectedIngredients.clear()
             }
-            if(selectedIngredients.isNotEmpty()){
-                Log.d("Selected is not empty", selectedIngredients.size.toString())
+
+            if (selectedIngredients.isNotEmpty()) {
                 binding.noIngredientHasRecordedLayout.visibility = View.INVISIBLE
-                binding.numOfSelectedIngredientsTextView.text = "Total: ${selectedIngredients.size} ingredient"
-            }
-            else {
-                Log.d("Selected is empty", selectedIngredients.size.toString())
+                binding.numOfSelectedIngredientsTextView.text =
+                    "Total: ${selectedIngredients.size} ingredient"
+            } else {
                 binding.noIngredientHasRecordedLayout.visibility = View.VISIBLE
                 binding.numOfSelectedIngredientsTextView.visibility = View.INVISIBLE
             }
         }
 
-
-//        // Remove ingredients that are already stored in selectedIngredients from getFromStoredIngredients
-//        getFromStoredIngredients.removeAll(selectedIngredients)
-
         bottomSheetDialog.show()
 
-        adapter.setIngredient(getFromStoredIngredients.minus(selectedIngredients.toSet()))
+        adapter.setIngredient(getIngredientFromDB.minus(selectedIngredients.toSet()))
         adapter.notifyDataSetChanged()
     }
 
@@ -331,13 +317,16 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
                         val position = viewHolder.adapterPosition
                         selectedIngredients.removeAt(position)
                         adapter.notifyItemRemoved(position)
+                        adapter.notifyDataSetChanged()
                         dialog.dismiss()
                         if (selectedIngredients.isEmpty()) {
                             binding.noIngredientHasRecordedLayout.visibility = View.VISIBLE
-                            binding.numOfSelectedIngredientsTextView.visibility = View.INVISIBLE
+                            binding.numOfSelectedIngredientsTextView.visibility = View.VISIBLE
+                            binding.numOfSelectedIngredientsTextView.text = "Select ingredient that you want to clear"
                         } else {
                             binding.noIngredientHasRecordedLayout.visibility = View.INVISIBLE
-                            binding.numOfSelectedIngredientsTextView.text = "Total: ${selectedIngredients.size} ingredient"
+                            binding.numOfSelectedIngredientsTextView.text =
+                                "Total: ${selectedIngredients.size} ingredient"
                         }
                     }.setNegativeButton("Cancel") { dialog, id ->
                         dialog.dismiss()
@@ -412,48 +401,41 @@ class CreateGoalFragment : Fragment(), IngredientClickListener{
             val clickedItemPosition = bottomSheetIngredientAdapter.getPosition(ingredient)
             val clickedItemView = layoutManager.findViewByPosition(clickedItemPosition)
 
-            val isItemSelected = clickedItemView?.tag as? Boolean ?: false
-//
-//            if (isItemSelected) {
-//                // Reset the background color of the clicked item to the default color
-//                clickedItemView?.setBackgroundColor(Color.WHITE)
-//                clickedItemView?.tag = false
-//
-//                // Deselect the ingredient if it was selected
-//                selectedIngredientsTemporary.remove(ingredient)
-//            } else {
-                // Check if the ingredient is not already in the selectedIngredientsTemporary list
-                if (!selectedIngredientsTemporary.contains(ingredient)) {
-                    // Change the background color of the clicked item to the selected color
-                    clickedItemView?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.btnColor))
-                    clickedItemView?.tag = true
+            if (!selectedIngredients.contains(ingredient)) {
+                // Change the background color of the clicked item to the selected color
+                clickedItemView?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.btnColor
+                    )
+                )
+                clickedItemView?.tag = true
 
-                    // Select the ingredient
-                    selectedIngredientsTemporary.add(ingredient)
-                } else {
-                    // If the ingredient is already in the list, remove it to toggle the selection
-                    clickedItemView?.setBackgroundColor(Color.WHITE)
-                    clickedItemView?.tag = false
-                    selectedIngredientsTemporary.remove(ingredient)
-                }
-//            }
+                // Select the ingredient
+                selectedIngredients.add(ingredient)
+                bottomSheetSelectedIngredient.add(ingredient)
+            } else {
+                // If the ingredient is already in the list, remove it to toggle the selection
+                clickedItemView?.setBackgroundColor(Color.WHITE)
+                clickedItemView?.tag = false
+                selectedIngredients.remove(ingredient)
+                bottomSheetSelectedIngredient.remove(ingredient)
+            }
         }
 
         val addBtn = bottomSheetView.findViewById<Button>(R.id.addBtn)
-        addBtn.isEnabled = selectedIngredientsTemporary.isNotEmpty()
+        addBtn.isEnabled = bottomSheetSelectedIngredient.isNotEmpty()
 
         val selectedTextView = bottomSheetView.findViewById<TextView>(R.id.selectedTextView)
-        selectedTextView.text = if(selectedIngredientsTemporary.isEmpty()){
-            "Select ingredients that you want to clear."
+        selectedTextView.text = if (bottomSheetSelectedIngredient.isEmpty()) {
+            "Select ingredients that you want to add."
+        } else {
+            "${bottomSheetSelectedIngredient.size} ingredient selected."
         }
-        else{
-            "${selectedIngredientsTemporary.size } ingredient selected."
-        }
-
-        Log.d("SelectedIngredients", selectedIngredientsTemporary.toString())
     }
 
-    private fun logg(msg:String){
+
+    private fun logg(msg: String) {
         Log.d("CreateGoalFragment", msg)
     }
 
