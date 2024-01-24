@@ -91,4 +91,12 @@ class InstructionRecyclerViewAdapter(
         notifyItemRangeChanged(addPos, size+1)
     }
 
+    fun saveCurrentFocus() {
+        //save instruction that user is typing
+        if (focusingOn != null) {
+            Log.d("now focusing instruction", focusingOn.toString())
+            val focusedText = focusingOn!!.getView().findViewById<TextInputEditText>(R.id.instructionTextInputEditText).text.toString()
+            instructionArrayList[focusingOn!!.bindingAdapterPosition] = focusedText
+        }
+    }
 }
