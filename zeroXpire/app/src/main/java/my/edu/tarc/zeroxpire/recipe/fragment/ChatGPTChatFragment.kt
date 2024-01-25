@@ -60,7 +60,7 @@ class ChatGPTChatFragment : Fragment() {
         }
 
         val args: ChatGPTChatFragmentArgs by navArgs()
-        val recipeName = args.recipeName
+        var recipeName = args.recipeName
         val ingredientNameArrayList = args.ingredientNameArrayList
 
         val key = dotenv["OPENAI_TOKEN"]
@@ -74,13 +74,16 @@ class ChatGPTChatFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        if (recipeName.isNotBlank()) {
+            recipeName = "$recipeName "
+        }
 
         val initialText =
             if (ingredientNameArrayList.isEmpty()) {
-                "Create a $recipeName recipe"
+                "Create a " + recipeName + "recipe"
             }else {
                 val ingredientsToUse = ingredientNameArrayList.joinToString(separator = ", ")
-                "Create a $recipeName recipe using $ingredientsToUse"
+                "Create a " + recipeName + "recipe using $ingredientsToUse"
             }
         questionEditText.setText(initialText)
 
