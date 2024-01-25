@@ -2,6 +2,7 @@ package my.edu.tarc.zeroxpire.recipe.fragment
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -101,6 +102,8 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
 
     private val goalViewModel: GoalViewModel by activityViewModels()
     private val ingredientViewModel: IngredientViewModel by activityViewModels()
+
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -568,6 +571,11 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
     }
 
     private fun createOrEditRecipe(instructionArrayList: ArrayList<String>) {
+
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.setMessage("Creating...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
         val recipeTemp = Recipe(
             title = titleTextInputEditText.text.toString(),
             note = noteTextInputEditText.text.toString(),
@@ -596,9 +604,12 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                     oldTitle = recipe.title,
                     view = currentView
                 ) {
-                    Snackbar.make(currentView, "Recipe edited successfully", Snackbar.LENGTH_SHORT)
-                        .show()
-                    findNavController().popBackStack()
+                    if(it){
+                        Snackbar.make(currentView, "Recipe edited successfully", Snackbar.LENGTH_SHORT)
+                            .show()
+                        findNavController().popBackStack()
+                        progressDialog?.dismiss()
+                    }
                 }
             }
         } else {
@@ -610,9 +621,13 @@ class RecipeCreateFragment : Fragment(), IngredientClickListener {
                 imageUri = fileUri,
                 view = currentView
             ) {
-                Snackbar.make(currentView, "Recipe created successfully", Snackbar.LENGTH_SHORT)
-                    .show()
-                findNavController().popBackStack()
+                if(it){
+                    Snackbar.make(currentView, "Recipe created successfully", Snackbar.LENGTH_SHORT)
+                        .show()
+                    findNavController().popBackStack()
+                    progressDialog?.dismiss()
+                }
+
             }
         }
     }
