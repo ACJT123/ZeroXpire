@@ -174,7 +174,7 @@ Last updated: [Date]\n
     <string name="like">like</string>
     <string name="likes_counter">likes counter</string>
     <string name="likes_count">0</string>
-    <string name="reviews">Reviews</string>
+    <string name="reviews">Comments</string>
     <string name="reply_to_user">reply to user</string>
     <string name="date">date</string>
     <string name="date_format">dd MMM yyyy HH:mm</string>
